@@ -1,18 +1,21 @@
-import {View, Text, StyleSheet, StatusBar} from 'react-native'
-import React, {useState} from 'react'
-import {SafeAreaView} from 'react-native'
+import { View, Text, StyleSheet, SafeAreaView, StatusBar } from 'react-native'
+import React, { useState } from 'react'
+import { SyeongColors } from '../../../components/Colors'
 import Header from '../../../components/Header/Header'
 import BackButton from '../../../components/Button/BackButton'
-import {SyeongColors} from '../../../components/Colors'
 import Title from '../../../components/Typography/Title'
 import BasicTextInput from '../../../components/TextInput/BasicTextInput'
 import BasicButton from '../../../components/Button/BasicButton'
+import { useSetRecoilState } from 'recoil'
+import { authAtom } from '../../../atoms/auth'
 
-const SignUpScreen = ({navigation}) => {
-  const [pNum, setPNum] = useState<string>('')
+const NicknameSettingScreen = ({navigation, route}) => {
+const [nickname, setNickname] = useState<string>('')
+const setAuthAtom = useSetRecoilState(authAtom)
 
   const onPressButton = () => {
-navigation.navigate('ValidateNumberScreen',{signUpData: {pNum}})
+navigation.navigate('MainTabScreen')
+setAuthAtom(true)
   }
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -21,24 +24,23 @@ navigation.navigate('ValidateNumberScreen',{signUpData: {pNum}})
         <BackButton />
       </Header>
       <View style={styles.container}>
-        <Title text="휴대폰 번호 입력" margin={[0, 0, 24, 0]} />
+        <Title text="닉네임 설정" margin={[0, 0, 24, 0]} />
         <BasicTextInput
-          value={pNum}
+          value={nickname}
           onChangeText={text => {
-            setPNum(text)
+            setNickname(text)
           }}
-          keyboardType={'number-pad'}
         />
         <Text style={styles.subText}>
-          다음을 누르면 입력한 번호로 인증번호를 전송돼요
+          언제든 프로필을 수정할 수 있어요
         </Text>
         <BasicButton
-          text="다음"
+          text="시작하기"
           fullWidth
           margin={[36,0,0,0]}
           backgroundColor={SyeongColors.sub_2}
           textColor={SyeongColors.gray_8}
-          disabled={pNum.length !== 11}//validation needed
+          disabled={!nickname}//validation needed
           onPress={onPressButton}
         />
       </View>
@@ -66,4 +68,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default SignUpScreen
+export default NicknameSettingScreen

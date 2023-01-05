@@ -1,4 +1,21 @@
 export const SyeongColors = {
-  green0: '#22D081',
-  blue0: '#2684FC'
+  gray_1: '#F4F5F7',
+  gray_2: '#E4E6EB',
+  gray_3: '#C5CCD3',
+  gray_4: '#8B95A1',
+  gray_5: '#697078',
+  gray_6: '#3B4148',
+  gray_7: '#282A2C',
+  gray_8: '#202020',
+  main_5: '#004093',
+  main_4: '#0067EB',
+  main_3: '#2684FC',
+  main_2: '#64A8FF',
+  main_1: '#AECEFF',
+  sub_5: '#009350',
+  sub_4: '#0CC772',
+  sub_3: '#22D081',
+  sub_2: '#73E3B0',
+  sub_1: '#D9FFEE',
+  sub_OFF_1: '#62BC93',
 }

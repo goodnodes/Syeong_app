@@ -1,19 +1,25 @@
-import {View, Text, StyleSheet, StatusBar} from 'react-native'
+import {View, Text, StyleSheet, SafeAreaView, StatusBar} from 'react-native'
 import React, {useState} from 'react'
-import {SafeAreaView} from 'react-native'
+import {SyeongColors} from '../../../components/Colors'
 import Header from '../../../components/Header/Header'
 import BackButton from '../../../components/Button/BackButton'
-import {SyeongColors} from '../../../components/Colors'
 import Title from '../../../components/Typography/Title'
 import BasicTextInput from '../../../components/TextInput/BasicTextInput'
 import BasicButton from '../../../components/Button/BasicButton'
 
-const SignUpScreen = ({navigation}) => {
-  const [pNum, setPNum] = useState<string>('')
+const PasswordSettingScreen = ({navigation, route}) => {
+  const [password, setPassword] = useState<string>()
+  const [passwordConfirm, setPasswordConfirm] = useState<string>()
 
   const onPressButton = () => {
-navigation.navigate('ValidateNumberScreen',{signUpData: {pNum}})
+    navigation.navigate('NicknameSettingScreen', {
+      signUpData: {
+        ...route.params.signUpData,
+        password: password,
+      },
+    })
   }
+
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <StatusBar barStyle={'dark-content'} />
@@ -21,24 +27,31 @@ navigation.navigate('ValidateNumberScreen',{signUpData: {pNum}})
         <BackButton />
       </Header>
       <View style={styles.container}>
-        <Title text="휴대폰 번호 입력" margin={[0, 0, 24, 0]} />
+        <Title text="비밀번호 설정" margin={[0, 0, 24, 0]} />
         <BasicTextInput
-          value={pNum}
+          value={password}
+          placeholder="비밀번호 입력"
+          margin={[0,0,8,0]}
+          secureTextEntry
           onChangeText={text => {
-            setPNum(text)
+            setPassword(text)
           }}
-          keyboardType={'number-pad'}
         />
-        <Text style={styles.subText}>
-          다음을 누르면 입력한 번호로 인증번호를 전송돼요
-        </Text>
+        <BasicTextInput
+          value={passwordConfirm}
+          placeholder="비밀번호 확인"
+          secureTextEntry
+          onChangeText={text => {
+            setPasswordConfirm(text)
+          }}
+        />
         <BasicButton
-          text="다음"
+          text="완료"
           fullWidth
-          margin={[36,0,0,0]}
+          margin={[36, 0, 0, 0]}
           backgroundColor={SyeongColors.sub_2}
           textColor={SyeongColors.gray_8}
-          disabled={pNum.length !== 11}//validation needed
+          disabled={!password || !passwordConfirm} //validation needed
           onPress={onPressButton}
         />
       </View>
@@ -66,4 +79,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default SignUpScreen
+export default PasswordSettingScreen

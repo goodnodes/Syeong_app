@@ -11,7 +11,7 @@ import {SafeAreaView} from 'react-native-safe-area-context'
 import PagerView from 'react-native-pager-view'
 import Header from '../../../components/Header/Header'
 import BackButton from '../../../components/Button/BackButton'
-import {gear_icon, pencil_icon} from '../../../../assets/icons'
+import {gear_icon,pencil_icon_line} from '../../../../assets/icons'
 import {SyeongColors} from '../../../components/Colors'
 
 const MyMainScreen = ({navigation}) => {
@@ -36,7 +36,7 @@ const MyMainScreen = ({navigation}) => {
           <Text style={styles.subText}>무조건 일주일 1번은 수영장에 가자!</Text>
           <TouchableOpacity onPress={()=>{navigation.navigate('EditProfileScreen')}}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Image source={pencil_icon} style={styles.pencil_icon} />
+              <Image source={pencil_icon_line} style={styles.pencil_icon_line} />
               <Text style={styles.smallText}>프로필 편집</Text>
             </View>
           </TouchableOpacity>
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: SyeongColors.gray_1,
   },
-  pencil_icon: {width: 20, height: 20, marginRight: 4},
+  pencil_icon_line: {width: 20, height: 20, marginRight: 4},
   buttonRow: {
     flexDirection: 'row',
     marginHorizontal: 20,

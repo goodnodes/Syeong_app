@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import {
   Image,
   ImageBackground,
+  ListRenderItem,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -18,25 +19,30 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
+import { useRecoilValue } from 'recoil'
 import {
   caret_down_icon,
   caret_up_linear_gradient,
   map_icon,
-  search_icon,
+  search_icon_white,
   syeong_logo,
   user_icon,
 } from '../../../../assets/icons'
 import {home_background} from '../../../../assets/images'
+import { poolAtom } from '../../../atoms/pool'
 import {SyeongColors} from '../../../components/Colors'
+import PoolListItem, { PoolData } from '../../../components/ListItem/PoolListItem'
 
 const HomeMainScreen = ({navigation, route}) => {
   console.log(route.params)
   const dummy = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
   const [iconState, setIconState] = useState<boolean>(false)
+const poolData = useRecoilValue(poolAtom)
 
   const insets = useSafeAreaInsets()
   const offset = useSharedValue(0)
+
 
   const animatedStyles = useAnimatedStyle(() => {
     const scale = interpolate(offset.value, [0, 560], [70, -70], {
@@ -123,19 +129,14 @@ const HomeMainScreen = ({navigation, route}) => {
     )
   }
 
-  const renderFlatListItem = ({item, index}) => {
+  const renderFlatListItem:ListRenderItem<PoolData> = ({item, index}) => {
     if (index === 0) {
       return renderFirstItem()
     }
     return (
-      <View
-        style={{
-          backgroundColor: SyeongColors.gray_1,
-          paddingHorizontal: 20,
-          paddingVertical: 10,
-        }}>
-        <View
-          style={{height: 100, width: '100%', backgroundColor: 'white'}}></View>
+      <View style={{backgroundColor: SyeongColors.gray_1, paddingHorizontal: 20}}>
+
+      <PoolListItem data={item} />
       </View>
     )
   }
@@ -149,7 +150,7 @@ const HomeMainScreen = ({navigation, route}) => {
           }}
           style={{zIndex: 10}}>
           <Image
-            source={search_icon}
+            source={search_icon_white}
             style={[
               {
                 width: 24,
@@ -182,7 +183,7 @@ const HomeMainScreen = ({navigation, route}) => {
           />
         </TouchableOpacity>
         <Animated.FlatList
-          data={dummy}
+          data={poolData}
           renderItem={renderFlatListItem}
           stickyHeaderIndices={[1]}
           onScroll={scrollHandler}

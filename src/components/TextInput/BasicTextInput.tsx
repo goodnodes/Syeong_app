@@ -3,7 +3,7 @@ import React from 'react'
 import {SyeongColors} from '../Colors'
 
 type Props = {
-  value: string | number
+  value: string
   placeholder?: string
   maxLength?: number
   keyboardType?: KeyboardType
@@ -35,6 +35,9 @@ const BasicTextInput = (props: Props) => {
       keyboardType={keyboardType}
       secureTextEntry={secureTextEntry}
       onChangeText={onChangeText}
+      autoComplete='off'
+      autoCorrect={false}
+      autoCapitalize='none'
     />
   )
 }

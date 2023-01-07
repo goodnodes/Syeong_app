@@ -1,8 +1,8 @@
 import React from 'react'
-import { atom, useRecoilState } from 'recoil'
+import {atom, useRecoilState} from 'recoil'
 
-import { NavigationContainer } from '@react-navigation/native'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import {NavigationContainer} from '@react-navigation/native'
+import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import LandingScreen from './screens/auth/LandingScreen'
 import SignInScreen from './screens/auth/SignInScreen'
 import SignUpScreen from './screens/auth/SignUpScreen'
@@ -15,61 +15,75 @@ import MyMainScreen from './screens/my/MyMainScreen'
 import MySettingScreen from './screens/my/MySettingScreen'
 import MySettingProposalScreen from './screens/my/MySettingScreen/MySettingProposalScreen'
 import MySettingWithdrawalScreen from './screens/my/MySettingScreen/MySettingWithdrawalScreen'
-import { authAtom } from './atoms/auth'
+import {authAtom} from './atoms/auth'
+import PasswordSignInScreen from './screens/auth/SignInScreen/PasswordSignInScreen'
+import SearchDetailScreen from './screens/SearchDetailScreen'
+import ReviewDetailScreen from './screens/SearchDetailScreen/ReviewDetailScreen'
+import WriteReviewScreen from './screens/SearchDetailScreen/WriteReviewScreen'
 
 const Stack = createNativeStackNavigator()
 
-
-
 const App = () => {
-
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(authAtom)
 
   return (
     <NavigationContainer>
-        <Stack.Navigator>
-          {isLoggedIn ? (
-            <Stack.Group screenOptions={{headerShown: false}}>
-              <Stack.Screen name="MainTabScreen" component={MainTabScreen} />
-              <Stack.Screen name="MyMainScreen" component={MyMainScreen} />
-              <Stack.Screen
-                name="EditProfileScreen"
-                component={EditProfileScreen}
-              />
-              <Stack.Screen
-                name="MySettingScreen"
-                component={MySettingScreen}
-              />
-              <Stack.Screen
-                name="MySettingProposalScreen"
-                component={MySettingProposalScreen}
-              />
-              <Stack.Screen
-                name="MySettingWithdrawalScreen"
-                component={MySettingWithdrawalScreen}
-              />
-            </Stack.Group>
-          ) : (
-            <Stack.Group screenOptions={{headerShown: false}}>
-              <Stack.Screen name="LandingScreen" component={LandingScreen} />
-              <Stack.Screen name="SignInScreen" component={SignInScreen} />
-              <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
-              <Stack.Screen
-                name="ValidateNumberScreen"
-                component={ValidateNumberScreen}
-              />
-              <Stack.Screen
-                name="PasswordSettingScreen"
-                component={PasswordSettingScreen}
-              />
-              <Stack.Screen
-                name="NicknameSettingScreen"
-                component={NicknameSettingScreen}
-              />
-            </Stack.Group>
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
+      <Stack.Navigator>
+        {isLoggedIn ? (
+          <Stack.Group screenOptions={{headerShown: false}}>
+            <Stack.Screen name="MainTabScreen" component={MainTabScreen} />
+            <Stack.Screen name="MyMainScreen" component={MyMainScreen} />
+            <Stack.Screen
+              name="EditProfileScreen"
+              component={EditProfileScreen}
+            />
+            <Stack.Screen name="MySettingScreen" component={MySettingScreen} />
+            <Stack.Screen
+              name="MySettingProposalScreen"
+              component={MySettingProposalScreen}
+            />
+            <Stack.Screen
+              name="MySettingWithdrawalScreen"
+              component={MySettingWithdrawalScreen}
+            />
+            <Stack.Screen
+              name="SearchDetailScreen"
+              component={SearchDetailScreen}
+            />
+            <Stack.Screen
+              name="ReviewDetailScreen"
+              component={ReviewDetailScreen}
+            />
+            <Stack.Screen
+              name="WriteReviewScreen"
+              component={WriteReviewScreen}
+            />
+          </Stack.Group>
+        ) : (
+          <Stack.Group screenOptions={{headerShown: false}}>
+            <Stack.Screen name="LandingScreen" component={LandingScreen} />
+            <Stack.Screen name="SignInScreen" component={SignInScreen} />
+            <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+            <Stack.Screen
+              name="ValidateNumberScreen"
+              component={ValidateNumberScreen}
+            />
+            <Stack.Screen
+              name="PasswordSettingScreen"
+              component={PasswordSettingScreen}
+            />
+            <Stack.Screen
+              name="NicknameSettingScreen"
+              component={NicknameSettingScreen}
+            />
+            <Stack.Screen
+              name="PasswordSignInScreen"
+              component={PasswordSignInScreen}
+            />
+          </Stack.Group>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   )
 }
 

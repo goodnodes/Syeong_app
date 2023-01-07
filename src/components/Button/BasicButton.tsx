@@ -13,6 +13,8 @@ type BasicButtonProps = {
   textSize?: number
   margin?: number[]
   disabled?: boolean
+  borderRadius?: number
+  borderWidth?:number
   onPress: () => void
 }
 
@@ -28,6 +30,8 @@ const BasicButton = (props: BasicButtonProps) => {
     textSize,
     margin,
     disabled,
+    borderRadius,
+    borderWidth,
     onPress,
   } = props
   return (
@@ -51,6 +55,8 @@ const BasicButton = (props: BasicButtonProps) => {
               marginLeft: margin[3],
             }
           : null,
+        borderRadius ? {borderRadius: borderRadius} : null,
+        borderWidth ? {borderWidth: borderWidth} : null,
       ]}>
       <View>
         <Text

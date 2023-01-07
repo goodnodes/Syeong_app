@@ -10,7 +10,7 @@ import React from 'react'
 import {SafeAreaView} from 'react-native-safe-area-context'
 import {SyeongColors} from '../../../components/Colors'
 import Header from '../../../components/Header/Header'
-import {fire_icon, search_icon, user_icon} from '../../../../assets/icons'
+import {fire_icon, search_icon_white, user_icon} from '../../../../assets/icons'
 
 const RecordMainScreen = ({navigation}) => {
   return (
@@ -23,7 +23,7 @@ const RecordMainScreen = ({navigation}) => {
               navigation.navigate('SearchMainScreen')
             }}>
             <Image
-              source={search_icon}
+              source={search_icon_white}
               style={{width: 24, height: 24, tintColor: SyeongColors.gray_8}}
             />
           </TouchableOpacity>

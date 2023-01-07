@@ -31,17 +31,16 @@ const EditProfileScreen = () => {
             multiline
           />
         </View>
-
-        </View>
-        <View style={styles.buttonRow}>
-      <BasicButton
-        backgroundColor={SyeongColors.sub_2}
-        text="저장하기"
-        textColor={SyeongColors.gray_8}
-        fullWidth
-        // margin={[0, 20, 0, 20]}
+      </View>
+      <View style={styles.buttonRow}>
+        <BasicButton
+          backgroundColor={SyeongColors.sub_2}
+          text="저장하기"
+          textColor={SyeongColors.gray_8}
+          fullWidth
+          onPress={()=>{}}
         />
-        </View>
+      </View>
     </SafeAreaView>
   )
 }
@@ -108,8 +107,9 @@ const styles = StyleSheet.create({
     letterSpacing: -0.41,
     paddingHorizontal: 16,
     paddingVertical: 12,
-  },buttonRow:{
+  },
+  buttonRow: {
     marginTop: 'auto',
-    paddingHorizontal: 20
-  }
+    paddingHorizontal: 20,
+  },
 })

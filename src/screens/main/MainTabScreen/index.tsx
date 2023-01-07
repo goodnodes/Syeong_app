@@ -1,7 +1,7 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 import React from 'react'
 import {Image, Text} from 'react-native'
-import {home_icon, note_icon, search_icon} from '../../../../assets/icons'
+import {home_icon, note_icon, search_icon_white} from '../../../../assets/icons'
 import {SyeongColors} from '../../../components/Colors'
 import HomeMainScreen from '../../home/HomeMainScreen'
 import RecordMainScreen from '../../record/RecordMainScreen'
@@ -81,7 +81,7 @@ const MainTabScreen = () => {
           tabBarIcon: ({focused}) => {
             return (
               <Image
-                source={search_icon}
+                source={search_icon_white}
                 style={[
                   {width: 24, height: 24},
                   focused

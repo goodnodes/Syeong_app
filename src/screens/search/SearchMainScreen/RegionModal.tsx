@@ -1,5 +1,5 @@
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native'
-import React, { useState } from 'react'
+import React, {useState} from 'react'
 import Modal from 'react-native-modal'
 import {SyeongColors} from '../../../components/Colors'
 import Image from '../../../components/Image/Image'
@@ -17,7 +17,8 @@ type Props = {
 const RegionModal = (props: Props) => {
   const {isVisible, setIsVisible, selectedRegion, setSelectedRegion} = props
 
-const [tempSelectedRegion, setTempSelectedRegion] = useState<string[]>(selectedRegion)
+  const [tempSelectedRegion, setTempSelectedRegion] =
+    useState<string[]>(selectedRegion)
   const onPressRegionButton = (region: string) => {
     if (selectedRegion.includes(region)) {
       setTempSelectedRegion(tempSelectedRegion.filter(item => item !== region))
@@ -28,7 +29,7 @@ const [tempSelectedRegion, setTempSelectedRegion] = useState<string[]>(selectedR
   const onPressRefreshButton = () => {
     setTempSelectedRegion([])
   }
-  const onPressFinishSelect = () =>{
+  const onPressFinishSelect = () => {
     setSelectedRegion(tempSelectedRegion)
     setIsVisible(false)
   }

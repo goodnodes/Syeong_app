@@ -35,16 +35,22 @@ const ValidateNumberScreen = ({navigation, route}) => {
       </Header>
       <View style={styles.container}>
         <Title text="인증번호 입력" margin={[0, 0, 24, 0]} />
-          <View>
-            <OtpInputs
-              handleChange={code => {setValidateNum(code)}}
-              numberOfInputs={4}
-              keyboardType="phone-pad"
-              inputStyles={styles.textInput}
-              style={{width: '100%', flexDirection: 'row', justifyContent: 'center'}}
-              autoFocus
-            />
-          </View>
+        <View>
+          <OtpInputs
+            handleChange={code => {
+              setValidateNum(code)
+            }}
+            numberOfInputs={4}
+            keyboardType="phone-pad"
+            inputStyles={styles.textInput}
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              justifyContent: 'center',
+            }}
+            autoFocus
+          />
+        </View>
 
         <BasicButton
           text="다음"

@@ -13,8 +13,15 @@ type Props = {
 }
 
 const BasicTextInput = (props: Props) => {
-  const {value, placeholder, maxLength, keyboardType, margin,secureTextEntry, onChangeText} =
-    props
+  const {
+    value,
+    placeholder,
+    maxLength,
+    keyboardType,
+    margin,
+    secureTextEntry,
+    onChangeText,
+  } = props
   return (
     <TextInput
       value={value}
@@ -35,9 +42,9 @@ const BasicTextInput = (props: Props) => {
       keyboardType={keyboardType}
       secureTextEntry={secureTextEntry}
       onChangeText={onChangeText}
-      autoComplete='off'
+      autoComplete="off"
       autoCorrect={false}
-      autoCapitalize='none'
+      autoCapitalize="none"
     />
   )
 }

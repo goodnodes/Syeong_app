@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import { StatusBar, StyleSheet, Text, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import React, {useState} from 'react'
+import {StatusBar, StyleSheet, Text, View} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import BackButton from '../../../components/Button/BackButton'
 import BasicButton from '../../../components/Button/BasicButton'
-import { SyeongColors } from '../../../components/Colors'
+import {SyeongColors} from '../../../components/Colors'
 import Header from '../../../components/Header/Header'
 import BasicTextInput from '../../../components/TextInput/BasicTextInput'
 import Title from '../../../components/Typography/Title'
@@ -13,7 +13,6 @@ const SignInScreen = ({navigation, route}) => {
 
   const onPressButton = () => {
     navigation.navigate('PasswordSignInScreen')
-
   }
 
   return (

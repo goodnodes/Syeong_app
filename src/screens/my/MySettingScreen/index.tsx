@@ -6,14 +6,21 @@ import {
   StyleSheet,
   Image,
 } from 'react-native'
-import React from 'react'
+import React, {useState} from 'react'
 import {SafeAreaView} from 'react-native-safe-area-context'
+import Modal from 'react-native-modal'
 import Header from '../../../components/Header/Header'
 import BackButton from '../../../components/Button/BackButton'
 import {SyeongColors} from '../../../components/Colors'
-import {chevron_right} from '../../../../assets/icons'
+import {
+  chevron_right,
+  pencil_icon_sub3,
+  traffic_cone_icon,
+} from '../../../../assets/icons'
+import BasicButton from '../../../components/Button/BasicButton'
 
 const MySettingScreen = ({navigation}) => {
+  const [isModalVisible, setIsModalVisible] = useState<boolean>()
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <Header backgroundColor={SyeongColors.gray_1}>
@@ -58,7 +65,10 @@ const MySettingScreen = ({navigation}) => {
         </View>
         <View style={styles.component}>
           <Text style={styles.componentTitle}>계정 관리</Text>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setIsModalVisible(true)
+            }}>
             <View style={[styles.button, {marginBottom: 8}]}>
               <Text style={styles.buttonText}>로그아웃</Text>
             </View>
@@ -79,6 +89,80 @@ const MySettingScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <Modal
+        animationIn={'zoomIn'}
+        animationOut={'zoomOut'}
+        isVisible={isModalVisible}
+        onBackButtonPress={() => {
+          setIsModalVisible(false)
+        }}
+        onBackdropPress={() => {
+          setIsModalVisible(false)
+        }}
+        style={{justifyContent: 'center', alignItems: 'center'}}
+        backdropColor="#74747480">
+        <View
+          style={{
+            backgroundColor: SyeongColors.gray_1,
+            borderRadius: 15,
+            paddingHorizontal: 16,
+            alignItems: 'center',
+          }}>
+          <Image
+            source={traffic_cone_icon}
+            style={{width: 60, height: 60, marginTop: 27, marginBottom: 16}}
+          />
+          <Text
+            style={{
+              color: SyeongColors.gray_8,
+              fontSize: 16,
+              fontWeight: '600',
+              lineHeight: 19.09,
+              letterSpacing: -0.41,
+              marginBottom: 8,
+            }}>
+            로그아웃할까요?
+          </Text>
+          <Text
+            style={{
+              color: SyeongColors.gray_4,
+              fontSize: 14,
+              fontWeight: '500',
+              lineHeight: 19.6,
+              letterSpacing: -0.41,
+              textAlign: 'center',
+              marginBottom: 36,
+            }}>
+            계정에서 로그아웃할게요{'\n'}휴대폰 번호를 통해 다시 로그인할 수
+            있어요
+          </Text>
+          <View style={{flexDirection: 'row', marginBottom: 16}}>
+            <BasicButton
+              width={136}
+              height={44}
+              text="아니요"
+              backgroundColor={SyeongColors.gray_3}
+              textColor={SyeongColors.gray_5}
+              textSize={17}
+              margin={[0, 15, 0, 0]}
+              borderRadius={8}
+              onPress={() => {
+                setIsModalVisible(false)
+              }}
+            />
+            <BasicButton
+              width={136}
+              height={44}
+              text="로그아웃"
+              backgroundColor={SyeongColors.main_3}
+              textColor={SyeongColors.gray_1}
+              textSize={17}
+              borderRadius={8}
+              onPress={() => {}}
+            />
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   )
 }

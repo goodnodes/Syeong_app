@@ -31,7 +31,7 @@ const PasswordSettingScreen = ({navigation, route}) => {
         <BasicTextInput
           value={password}
           placeholder="비밀번호 입력"
-          margin={[0,0,8,0]}
+          margin={[0, 0, 8, 0]}
           secureTextEntry
           onChangeText={text => {
             setPassword(text)

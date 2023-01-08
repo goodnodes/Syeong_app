@@ -30,12 +30,15 @@ const ReviewBadgeComponent = (props: Props) => {
           {prize === 1 ? '🥇' : '🥈'}
         </Text>
         <Text
-          style={[{
-            color: SyeongColors.gray_4,
-            fontSize: 24,
-            fontWeight: '600',
-            lineHeight: 44,
-          }, prize===2&&{color: SyeongColors.gray_3}]}>
+          style={[
+            {
+              color: SyeongColors.gray_4,
+              fontSize: 24,
+              fontWeight: '600',
+              lineHeight: 44,
+            },
+            prize === 2 && {color: SyeongColors.gray_3},
+          ]}>
           {reviewNum}
         </Text>
       </View>

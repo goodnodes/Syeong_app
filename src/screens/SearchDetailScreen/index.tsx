@@ -8,6 +8,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
+import Animated, {
+  Extrapolation,
+  interpolate,
+  interpolateColor,
+  interpolateColors,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {
   clipboard_icon,
@@ -53,48 +62,70 @@ const SearchDetailScreen = ({navigation, route}) => {
       },
     ],
   }
-
+  const offset = useSharedValue(0)
   const insets = useSafeAreaInsets()
+
+  const animatedColor = Animated.interpolateColors(offset.value, {
+    inputRange: [0, 250],
+    outputColorRange: ['transparent', '#FFFFFF'],
+  })
+
+  const scrollHandler = useAnimatedScrollHandler(event => {
+    offset.value = event.contentOffset.y
+    // console.log(event.contentOffset.y)
+  })
   return (
     <View style={{flex: 1}}>
       <StatusBar barStyle={'light-content'} />
-      <Header backgroundColor="transparent">
-        <View
-          style={{
+      <Animated.View
+        style={[
+          {
             marginTop: insets.top,
             flexDirection: 'row',
             alignContent: 'center',
             justifyContent: 'space-between',
             zIndex: 10,
-          }}>
-          <BackButton isLight />
-          <View>
-            <TouchableOpacity>
-              <Image source={share_icon} style={{width: 24, height: 24}} />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Image source={pin_icon_gray1} style={{width: 24, height: 24}} />
-            </TouchableOpacity>
-          </View>
+            position: 'absolute',
+            paddingHorizontal: 20,
+            width: '100%',
+            top: -47,
+            height: 123,
+            paddingTop: insets.top,
+          },
+          {backgroundColor: animatedColor},
+        ]}>
+        <BackButton isLight />
+        <View style={{flexDirection: 'row', alignContent: 'center'}}>
+          <TouchableOpacity>
+            <Image
+              source={share_icon}
+              style={{width: 24, height: 24, marginRight: 16}}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Image source={pin_icon_gray1} style={{width: 24, height: 24}} />
+          </TouchableOpacity>
         </View>
-      </Header>
+      </Animated.View>
       <Image
         source={{uri: dummy.picture}}
         style={{
           width: '100%',
-          height: Dimensions.get('window').height / 3,
+          height: Dimensions.get('window').height / 2.5,
           zIndex: -10,
           position: 'absolute',
         }}
       />
-      <ScrollView
+      <Animated.ScrollView
         style={{
           flex: 1,
-        }}>
+        }}
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}>
         <View
           style={{
             backgroundColor: 'white',
-            marginTop: 200,
+            marginTop: 300,
             borderTopLeftRadius: 15,
             borderTopRightRadius: 15,
             flex: 1,
@@ -193,7 +224,9 @@ const SearchDetailScreen = ({navigation, route}) => {
               </View>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('WriteReviewScreen')
+                  navigation.navigate('WriteReviewScreen', {
+                    data: {title: dummy.title},
+                  })
                 }}>
                 <View style={styles.rowAlignCenter}>
                   <Image source={pencil_icon} style={styles.pencil_icon} />
@@ -215,7 +248,10 @@ const SearchDetailScreen = ({navigation, route}) => {
               <View style={styles.reviewList}>
                 <ReviewItem review={dummy.review[0]} />
                 <ReviewItem review={dummy.review[1]} />
-                <TouchableOpacity onPress={()=>{navigation.navigate('ReviewDetailScreen')}}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('ReviewDetailScreen', {data: dummy})
+                  }}>
                   <Text
                     style={{
                       marginTop: 16,
@@ -260,7 +296,7 @@ const SearchDetailScreen = ({navigation, route}) => {
             <Text style={styles.reviewTitle}>수영장 지도</Text>
           </View>
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   )
 }
@@ -367,7 +403,7 @@ const styles = StyleSheet.create({
     backgroundColor: SyeongColors.gray_1,
     borderRadius: 8,
     paddingHorizontal: 16,
-    marginTop: 4
+    marginTop: 4,
   },
 })
 

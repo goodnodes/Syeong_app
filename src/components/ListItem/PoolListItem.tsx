@@ -16,7 +16,10 @@ const PoolListItem = (props: Props) => {
   const {title, region, picture} = props.data
   const navigation = useNavigation()
   return (
-    <TouchableOpacity onPress={()=>{navigation.navigate('SearchDetailScreen')}}>
+    <TouchableOpacity
+      onPress={() => {
+        navigation.navigate('SearchDetailScreen')
+      }}>
       <View
         style={{
           width: '100%',

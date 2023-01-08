@@ -12,7 +12,7 @@ const SignUpScreen = ({navigation}) => {
   const [pNum, setPNum] = useState<string>('')
 
   const onPressButton = () => {
-navigation.navigate('ValidateNumberScreen',{signUpData: {pNum}})
+    navigation.navigate('ValidateNumberScreen', {signUpData: {pNum}})
   }
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -35,10 +35,10 @@ navigation.navigate('ValidateNumberScreen',{signUpData: {pNum}})
         <BasicButton
           text="다음"
           fullWidth
-          margin={[36,0,0,0]}
+          margin={[36, 0, 0, 0]}
           backgroundColor={SyeongColors.sub_2}
           textColor={SyeongColors.gray_8}
-          disabled={pNum.length !== 11}//validation needed
+          disabled={pNum.length !== 11} //validation needed
           onPress={onPressButton}
         />
       </View>

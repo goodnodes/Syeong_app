@@ -10,7 +10,7 @@ const BackButton = (props: Props) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.pop()
+        navigation.goBack()
       }}>
       <Image
         source={props.isLight ? caret_left_icon_white : caret_left_icon}

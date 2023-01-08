@@ -20,6 +20,7 @@ import PasswordSignInScreen from './screens/auth/SignInScreen/PasswordSignInScre
 import SearchDetailScreen from './screens/SearchDetailScreen'
 import ReviewDetailScreen from './screens/SearchDetailScreen/ReviewDetailScreen'
 import WriteReviewScreen from './screens/SearchDetailScreen/WriteReviewScreen'
+import CompleteScreen from './screens/SearchDetailScreen/CompleteScreen'
 
 const Stack = createNativeStackNavigator()
 
@@ -57,7 +58,9 @@ const App = () => {
             <Stack.Screen
               name="WriteReviewScreen"
               component={WriteReviewScreen}
+              options={{gestureDirection: 'vertical'}}
             />
+            <Stack.Screen name="CompleteScreen" component={CompleteScreen} />
           </Stack.Group>
         ) : (
           <Stack.Group screenOptions={{headerShown: false}}>

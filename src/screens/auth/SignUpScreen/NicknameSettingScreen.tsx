@@ -1,21 +1,21 @@
-import { View, Text, StyleSheet, SafeAreaView, StatusBar } from 'react-native'
-import React, { useState } from 'react'
-import { SyeongColors } from '../../../components/Colors'
+import {View, Text, StyleSheet, SafeAreaView, StatusBar} from 'react-native'
+import React, {useState} from 'react'
+import {SyeongColors} from '../../../components/Colors'
 import Header from '../../../components/Header/Header'
 import BackButton from '../../../components/Button/BackButton'
 import Title from '../../../components/Typography/Title'
 import BasicTextInput from '../../../components/TextInput/BasicTextInput'
 import BasicButton from '../../../components/Button/BasicButton'
-import { useSetRecoilState } from 'recoil'
-import { authAtom } from '../../../atoms/auth'
+import {useSetRecoilState} from 'recoil'
+import {authAtom} from '../../../atoms/auth'
 
 const NicknameSettingScreen = ({navigation, route}) => {
-const [nickname, setNickname] = useState<string>('')
-const setAuthAtom = useSetRecoilState(authAtom)
+  const [nickname, setNickname] = useState<string>('')
+  const setAuthAtom = useSetRecoilState(authAtom)
 
   const onPressButton = () => {
-navigation.navigate('MainTabScreen')
-setAuthAtom(true)
+    navigation.navigate('MainTabScreen')
+    setAuthAtom(true)
   }
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -31,16 +31,14 @@ setAuthAtom(true)
             setNickname(text)
           }}
         />
-        <Text style={styles.subText}>
-          언제든 프로필을 수정할 수 있어요
-        </Text>
+        <Text style={styles.subText}>언제든 프로필을 수정할 수 있어요</Text>
         <BasicButton
           text="시작하기"
           fullWidth
-          margin={[36,0,0,0]}
+          margin={[36, 0, 0, 0]}
           backgroundColor={SyeongColors.sub_2}
           textColor={SyeongColors.gray_8}
-          disabled={!nickname}//validation needed
+          disabled={!nickname} //validation needed
           onPress={onPressButton}
         />
       </View>

@@ -19,7 +19,7 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
-import { useRecoilValue } from 'recoil'
+import {useRecoilValue} from 'recoil'
 import {
   caret_down_icon,
   caret_up_linear_gradient,
@@ -29,20 +29,19 @@ import {
   user_icon,
 } from '../../../../assets/icons'
 import {home_background} from '../../../../assets/images'
-import { poolAtom } from '../../../atoms/pool'
+import {poolAtom} from '../../../atoms/pool'
 import {SyeongColors} from '../../../components/Colors'
-import PoolListItem, { PoolData } from '../../../components/ListItem/PoolListItem'
+import PoolListItem, {PoolData} from '../../../components/ListItem/PoolListItem'
 
 const HomeMainScreen = ({navigation, route}) => {
-  console.log(route.params)
+  // console.log(route.params)
   const dummy = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
   const [iconState, setIconState] = useState<boolean>(false)
-const poolData = useRecoilValue(poolAtom)
+  const poolData = useRecoilValue(poolAtom)
 
   const insets = useSafeAreaInsets()
   const offset = useSharedValue(0)
-
 
   const animatedStyles = useAnimatedStyle(() => {
     const scale = interpolate(offset.value, [0, 560], [70, -70], {
@@ -129,14 +128,14 @@ const poolData = useRecoilValue(poolAtom)
     )
   }
 
-  const renderFlatListItem:ListRenderItem<PoolData> = ({item, index}) => {
+  const renderFlatListItem: ListRenderItem<PoolData> = ({item, index}) => {
     if (index === 0) {
       return renderFirstItem()
     }
     return (
-      <View style={{backgroundColor: SyeongColors.gray_1, paddingHorizontal: 20}}>
-
-      <PoolListItem data={item} />
+      <View
+        style={{backgroundColor: SyeongColors.gray_1, paddingHorizontal: 20}}>
+        <PoolListItem data={item} />
       </View>
     )
   }

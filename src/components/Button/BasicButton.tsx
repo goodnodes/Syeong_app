@@ -14,7 +14,7 @@ type BasicButtonProps = {
   margin?: number[]
   disabled?: boolean
   borderRadius?: number
-  borderWidth?:number
+  borderWidth?: number
   onPress: () => void
 }
 

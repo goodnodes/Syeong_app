@@ -1,6 +1,6 @@
 import {View, Text} from 'react-native'
 import React from 'react'
-import { SyeongColors } from '../../components/Colors'
+import {SyeongColors} from '../../components/Colors'
 type ReviewData = {
   name: string
   createdAt: string

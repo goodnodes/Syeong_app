@@ -77,6 +77,7 @@ const HomeMainScreen = ({navigation, route}) => {
         <View style={styles.myPool}>
           <View style={styles.myPoolTitle}>
             <Text style={styles.myPoolText}>🏊‍♀️ 나의 고정 수영장</Text>
+            <Text style={styles.myPoolSubText}>2/5</Text>
           </View>
           <View style={{marginVertical: 16}}>
             <ScrollView
@@ -88,13 +89,37 @@ const HomeMainScreen = ({navigation, route}) => {
                   <View
                     key={index}
                     style={{
-                      width: 324,
+                      width: 324, //device 크기로 변환
                       height: 107,
                       backgroundColor: '#FFFFFF',
                       borderRadius: 10,
                       marginRight: 8,
                       marginBottom: 10,
-                    }}></View>
+                      paddingTop: 16,
+                      paddingLeft: 16
+                    }}>
+                    <Text
+                      style={{
+                        color: SyeongColors.gray_8,
+                        fontSize: 16,
+                        fontWeight: '600',
+                        lineHeight: 19.09,
+                        letterSpacing: -0.41,
+                        marginBottom: 8
+                      }}>
+                      문정교육회관
+                    </Text>
+                    <Text
+                      style={{
+                        color: SyeongColors.gray_4,
+                        fontSize: 15,
+                        fontWeight: '500',
+                        lineHeight: 22,
+                        letterSpacing: -0.41,
+                      }}>
+                      서울 송파구 어쩌구 저쩌구
+                    </Text>
+                  </View>
                 )
               })}
             </ScrollView>
@@ -210,6 +235,8 @@ const styles = StyleSheet.create({
   myPoolTitle: {
     flexDirection: 'row',
     paddingHorizontal: 20,
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   myPoolText: {
     color: SyeongColors.gray_8,
@@ -217,6 +244,13 @@ const styles = StyleSheet.create({
     fontSize: 17,
     lineHeight: 20.29,
     letterSpacing: -0.41,
+  },
+  myPoolSubText: {
+    color: SyeongColors.gray_4,
+    fontSize: 14,
+    lineHeight: 16.71,
+    letterSpacing: -0.41,
+    fontWeight: '500',
   },
   poolListTitle: {
     backgroundColor: SyeongColors.gray_1,

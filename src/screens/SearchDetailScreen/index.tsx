@@ -1,35 +1,31 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
-  Dimensions,
-  ScrollView,
-  StatusBar,
+  Dimensions, StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native'
 import Animated, {
   Extrapolation,
-  interpolate,
-  interpolateColor,
-  interpolateColors,
-  useAnimatedScrollHandler,
+  interpolate, runOnJS, useAnimatedScrollHandler,
   useAnimatedStyle,
-  useSharedValue,
+  useSharedValue
 } from 'react-native-reanimated'
-import {useSafeAreaInsets} from 'react-native-safe-area-context'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import {
   clipboard_icon,
   map_icon_main3,
   pencil_icon,
   phone_icon,
   pin_icon_gray1,
+  pin_icon_gray8,
   share_icon,
+  share_icon_gray8
 } from '../../../assets/icons'
 import BackButton from '../../components/Button/BackButton'
 import BasicButton from '../../components/Button/BasicButton'
-import {SyeongColors} from '../../components/Colors'
-import Header from '../../components/Header/Header'
+import { SyeongColors } from '../../components/Colors'
 import Image from '../../components/Image/Image'
 import ReviewBadgeComponent from './ReviewBadgeComponent'
 import ReviewItem from './ReviewItem'
@@ -65,24 +61,79 @@ const SearchDetailScreen = ({navigation, route}) => {
   const offset = useSharedValue(0)
   const insets = useSafeAreaInsets()
 
-  const animatedColor = Animated.interpolateColors(offset.value, {
-    inputRange: [0, 250],
-    outputColorRange: ['transparent', '#FFFFFF'],
+  const [iconState, setIconState] = useState<boolean>()
+
+  const animatedOpacity = useAnimatedStyle(() => {
+    const opacity = interpolate(offset.value, [100, 250], [0, 1], {
+      extrapolateLeft: Extrapolation.CLAMP,
+      extrapolateRight: Extrapolation.CLAMP,
+    })
+    return {opacity}
   })
 
   const scrollHandler = useAnimatedScrollHandler(event => {
     offset.value = event.contentOffset.y
-    // console.log(event.contentOffset.y)
+        if (event.contentOffset.y > 150) runOnJS(setIconState)(true)
+    else runOnJS(setIconState)(false)
   })
+
   return (
     <View style={{flex: 1}}>
-      <StatusBar barStyle={'light-content'} />
+      <StatusBar barStyle={iconState ? 'dark-content' : 'light-content'} />
       <Animated.View
         style={[
           {
             marginTop: insets.top,
+            width: '100%',
+            alignItems: 'center',
+            zIndex: 20,
+            position: 'absolute',
+            paddingHorizontal: 20,
+            top: -47,
+            height: 123,
+            paddingTop: insets.top + 7,
+            backgroundColor: '#FFFFFF',
+          },
+          animatedOpacity,
+        ]}>
+        <View style={{position: 'absolute', top: insets.top + 7, left: 20}}>
+          <BackButton />
+        </View>
+
+        <Text
+          style={{
+            color: SyeongColors.gray_8,
+            fontSize: 17,
+            fontWeight: '600',
+            lineHeight: 20.29,
+            letterSpacing: -0.41,
+          }}>
+          문정교육회관
+        </Text>
+        <View
+          style={{
             flexDirection: 'row',
             alignContent: 'center',
+            position: 'absolute',
+            top: insets.top + 7,
+            right: 20,
+          }}>
+          <TouchableOpacity>
+            <Image
+              source={share_icon_gray8}
+              style={{width: 24, height: 24, marginRight: 16}}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Image source={pin_icon_gray8} style={{width: 24, height: 24}} />
+          </TouchableOpacity>
+        </View>
+      </Animated.View>
+      <View
+        style={[
+          {
+            marginTop: insets.top,
+            flexDirection: 'row',
             justifyContent: 'space-between',
             zIndex: 10,
             position: 'absolute',
@@ -90,9 +141,8 @@ const SearchDetailScreen = ({navigation, route}) => {
             width: '100%',
             top: -47,
             height: 123,
-            paddingTop: insets.top,
+            paddingTop: insets.top + 7,
           },
-          {backgroundColor: animatedColor},
         ]}>
         <BackButton isLight />
         <View style={{flexDirection: 'row', alignContent: 'center'}}>
@@ -106,7 +156,7 @@ const SearchDetailScreen = ({navigation, route}) => {
             <Image source={pin_icon_gray1} style={{width: 24, height: 24}} />
           </TouchableOpacity>
         </View>
-      </Animated.View>
+      </View>
       <Image
         source={{uri: dummy.picture}}
         style={{

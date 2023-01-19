@@ -1,18 +1,25 @@
-import React, { useState } from 'react'
+import React, {useState} from 'react'
 import {
-  Dimensions, StatusBar,
+  Dimensions,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  Share,
+  Alert,
+  Linking,
 } from 'react-native'
 import Animated, {
   Extrapolation,
-  interpolate, runOnJS, useAnimatedScrollHandler,
+  interpolate,
+  runOnJS,
+  useAnimatedScrollHandler,
   useAnimatedStyle,
-  useSharedValue
+  useSharedValue,
 } from 'react-native-reanimated'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import {useSafeAreaInsets} from 'react-native-safe-area-context'
+import Clipboard from '@react-native-clipboard/clipboard'
 import {
   clipboard_icon,
   map_icon_main3,
@@ -21,11 +28,11 @@ import {
   pin_icon_gray1,
   pin_icon_gray8,
   share_icon,
-  share_icon_gray8
+  share_icon_gray8,
 } from '../../../assets/icons'
 import BackButton from '../../components/Button/BackButton'
 import BasicButton from '../../components/Button/BasicButton'
-import { SyeongColors } from '../../components/Colors'
+import {SyeongColors} from '../../components/Colors'
 import Image from '../../components/Image/Image'
 import ReviewBadgeComponent from './ReviewBadgeComponent'
 import ReviewItem from './ReviewItem'
@@ -73,9 +80,39 @@ const SearchDetailScreen = ({navigation, route}) => {
 
   const scrollHandler = useAnimatedScrollHandler(event => {
     offset.value = event.contentOffset.y
-        if (event.contentOffset.y > 150) runOnJS(setIconState)(true)
+    if (event.contentOffset.y > 150) runOnJS(setIconState)(true)
     else runOnJS(setIconState)(false)
   })
+
+  const copyLocationToClipboard = (location: string) => {
+    Clipboard.setString(location)
+  }
+
+  const copyCallToClipboard = (call: string) => {
+    Clipboard.setString(call)
+  }
+
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          'React Native | A framework for building native apps using React',
+      })
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      Alert.alert(error.message)
+    }
+  }
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   return (
     <View style={{flex: 1}}>
@@ -118,7 +155,7 @@ const SearchDetailScreen = ({navigation, route}) => {
             top: insets.top + 7,
             right: 20,
           }}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onShare}>
             <Image
               source={share_icon_gray8}
               style={{width: 24, height: 24, marginRight: 16}}
@@ -157,6 +194,7 @@ const SearchDetailScreen = ({navigation, route}) => {
           </TouchableOpacity>
         </View>
       </View>
+
       <Image
         source={{uri: dummy.picture}}
         style={{
@@ -193,6 +231,7 @@ const SearchDetailScreen = ({navigation, route}) => {
           <View style={styles.infoRow}>
             <View style={styles.rowAlignCenter}>
               <Image source={map_icon_main3} style={styles.map_icon_main3} />
+
               <Text
                 style={{
                   color: SyeongColors.gray_5,
@@ -204,7 +243,12 @@ const SearchDetailScreen = ({navigation, route}) => {
                 }}>
                 {dummy.location}
               </Text>
-              <Image source={clipboard_icon} style={styles.map_icon_main3} />
+              <TouchableOpacity
+                onPress={() => {
+                  copyLocationToClipboard(dummy.location)
+                }}>
+                <Image source={clipboard_icon} style={styles.map_icon_main3} />
+              </TouchableOpacity>
             </View>
             <View
               style={{
@@ -214,21 +258,36 @@ const SearchDetailScreen = ({navigation, route}) => {
               }}>
               <View style={styles.rowAlignCenter}>
                 <Image source={phone_icon} style={styles.map_icon_main3} />
-                <Text
-                  style={{
-                    color: SyeongColors.main_4,
-                    fontSize: 15,
-                    fontWeight: '500',
-                    lineHeight: 22,
-                    letterSpacing: -0.41,
-                    marginRight: 4,
+                <TouchableOpacity
+                  onPress={() => {
+                    Linking.openURL(`tel:${dummy.call}`)
                   }}>
-                  {dummy.call}
-                </Text>
-
-                <Image source={clipboard_icon} style={styles.map_icon_main3} />
+                  <Text
+                    style={{
+                      color: SyeongColors.main_4,
+                      fontSize: 15,
+                      fontWeight: '500',
+                      lineHeight: 22,
+                      letterSpacing: -0.41,
+                      marginRight: 4,
+                    }}>
+                    {dummy.call}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    copyCallToClipboard(dummy.call)
+                  }}>
+                  <Image
+                    source={clipboard_icon}
+                    style={styles.map_icon_main3}
+                  />
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('MySettingProposalScreen')
+                }}>
                 <Text
                   style={{
                     color: SyeongColors.gray_4,
@@ -266,7 +325,8 @@ const SearchDetailScreen = ({navigation, route}) => {
               borderWidth={1}
             />
           </View>
-          <View style={styles.reviewContainer}>
+
+          {/* <View style={styles.reviewContainer}>
             <View style={styles.reviewTitleRow}>
               <View style={styles.rowAlignCenter}>
                 <Text style={styles.reviewTitle}>수영장 리뷰 </Text>
@@ -317,7 +377,7 @@ const SearchDetailScreen = ({navigation, route}) => {
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
+          </View> */}
           <View style={styles.freeInfo}>
             <Text
               style={{

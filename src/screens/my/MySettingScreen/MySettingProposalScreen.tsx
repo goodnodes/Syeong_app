@@ -1,5 +1,5 @@
-import {View, Text, StyleSheet} from 'react-native'
-import React from 'react'
+import {View, Text, StyleSheet, StatusBar,Dimensions} from 'react-native'
+import React,{useState} from 'react'
 import {SafeAreaView} from 'react-native-safe-area-context'
 import Header from '../../../components/Header/Header'
 import {SyeongColors} from '../../../components/Colors'
@@ -7,8 +7,11 @@ import BackButton from '../../../components/Button/BackButton'
 import BasicButton from '../../../components/Button/BasicButton'
 
 const MySettingProposalScreen = () => {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
   return (
     <SafeAreaView style={styles.safeAreaView}>
+      <StatusBar barStyle={'dark-content'}/>
       <Header backgroundColor={SyeongColors.gray_1}>
         <View style={styles.backButton}>
           <BackButton />
@@ -60,6 +63,7 @@ const MySettingProposalScreen = () => {
           onPress={() => {}}
         />
       </View>
+
       <View
         style={{
           marginTop: 8,

@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {
   Image,
   ImageBackground,
@@ -18,8 +18,10 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated'
+import CookieManager from '@react-native-cookies/cookies'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {useRecoilValue} from 'recoil'
+import axios from 'axios'
 import {
   caret_down_icon,
   caret_up_linear_gradient,
@@ -29,15 +31,19 @@ import {
   user_icon,
 } from '../../../../assets/icons'
 import {home_background} from '../../../../assets/images'
+import {regionData} from '../../../../assets/static/region'
 import {poolAtom} from '../../../atoms/pool'
 import {SyeongColors} from '../../../components/Colors'
 import PoolListItem, {PoolData} from '../../../components/ListItem/PoolListItem'
+import Dropdown from '../../../components/Modal/Dropdown'
+import DropdownPicker from 'react-native-dropdown-picker'
 
 const HomeMainScreen = ({navigation, route}) => {
-  // console.log(route.params)
   const dummy = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
   const [iconState, setIconState] = useState<boolean>(false)
+  const [selectedRegion, setSelectedRegion] = useState<string>(regionData[0])
+  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false)
   const poolData = useRecoilValue(poolAtom)
 
   const insets = useSafeAreaInsets()
@@ -96,7 +102,7 @@ const HomeMainScreen = ({navigation, route}) => {
                       marginRight: 8,
                       marginBottom: 10,
                       paddingTop: 16,
-                      paddingLeft: 16
+                      paddingLeft: 16,
                     }}>
                     <Text
                       style={{
@@ -105,7 +111,7 @@ const HomeMainScreen = ({navigation, route}) => {
                         fontWeight: '600',
                         lineHeight: 19.09,
                         letterSpacing: -0.41,
-                        marginBottom: 8
+                        marginBottom: 8,
                       }}>
                       문정교육회관
                     </Text>
@@ -131,6 +137,14 @@ const HomeMainScreen = ({navigation, route}) => {
               <Image source={map_icon} style={styles.map_icon} />
               <Text style={styles.regionText}>송파구</Text>
               <Image source={caret_down_icon} style={styles.caret_down} />
+              <DropdownPicker
+                open={dropdownOpen}
+                value={selectedRegion}
+                items={regionData}
+                setOpen={setDropdownOpen}
+                setValue={setSelectedRegion}
+                setItems={() => {}}
+              />
             </View>
           </TouchableOpacity>
           <Text style={styles.mediumText}>모든 수영장 12</Text>
@@ -269,7 +283,7 @@ const styles = StyleSheet.create({
     lineHeight: 20.29,
     letterSpacing: -0.41,
   },
-  syeong_logo: {width: 124.04, height: 127.07},
+  syeong_logo: {width: 113.23, height: 116},
   smallText: {
     textAlign: 'center',
     color: '#FFFFFF',

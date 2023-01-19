@@ -18,4 +18,5 @@ export const SyeongColors = {
   sub_2: '#73E3B0',
   sub_1: '#D9FFEE',
   sub_OFF_1: '#62BC93',
+  red_1: '#D10000'
 }

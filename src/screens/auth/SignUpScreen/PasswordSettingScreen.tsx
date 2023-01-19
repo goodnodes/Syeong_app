@@ -1,18 +1,18 @@
-import {View, Text, StyleSheet, SafeAreaView, StatusBar} from 'react-native'
-import React, {useState} from 'react'
-import {SyeongColors} from '../../../components/Colors'
-import Header from '../../../components/Header/Header'
-import BackButton from '../../../components/Button/BackButton'
-import Title from '../../../components/Typography/Title'
-import BasicTextInput from '../../../components/TextInput/BasicTextInput'
-import BasicButton from '../../../components/Button/BasicButton'
+import {View, Text, StyleSheet, SafeAreaView, StatusBar} from "react-native"
+import React, {useState} from "react"
+import {SyeongColors} from "../../../components/Colors"
+import Header from "../../../components/Header/Header"
+import BackButton from "../../../components/Button/BackButton"
+import Title from "../../../components/Typography/Title"
+import BasicTextInput from "../../../components/TextInput/BasicTextInput"
+import BasicButton from "../../../components/Button/BasicButton"
 
 const PasswordSettingScreen = ({navigation, route}) => {
-  const [password, setPassword] = useState<string>()
-  const [passwordConfirm, setPasswordConfirm] = useState<string>()
+  const [password, setPassword] = useState<string>("")
+  const [passwordConfirm, setPasswordConfirm] = useState<string>("")
 
   const onPressButton = () => {
-    navigation.navigate('NicknameSettingScreen', {
+    navigation.navigate("NicknameSettingScreen", {
       signUpData: {
         ...route.params.signUpData,
         password: password,
@@ -22,7 +22,7 @@ const PasswordSettingScreen = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={'dark-content'} />
+      <StatusBar barStyle={"dark-content"} />
       <Header backgroundColor={SyeongColors.gray_1}>
         <BackButton />
       </Header>
@@ -30,7 +30,7 @@ const PasswordSettingScreen = ({navigation, route}) => {
         <Title text="비밀번호 설정" margin={[0, 0, 24, 0]} />
         <BasicTextInput
           value={password}
-          placeholder="비밀번호 입력"
+          placeholder="비밀번호 입력 (6자리 이상)"
           margin={[0, 0, 8, 0]}
           secureTextEntry
           onChangeText={text => {
@@ -51,7 +51,11 @@ const PasswordSettingScreen = ({navigation, route}) => {
           margin={[36, 0, 0, 0]}
           backgroundColor={SyeongColors.sub_2}
           textColor={SyeongColors.gray_8}
-          disabled={!password || !passwordConfirm} //validation needed
+          disabled={
+            password.length < 6 ||
+            passwordConfirm.length < 6 ||
+            password !== passwordConfirm
+          } //validation needed
           onPress={onPressButton}
         />
       </View>
@@ -72,7 +76,7 @@ const styles = StyleSheet.create({
   subText: {
     color: SyeongColors.gray_4,
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
     lineHeight: 16.71,
     letterSpacing: -0.41,
     marginTop: 12,

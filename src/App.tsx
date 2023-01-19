@@ -1,6 +1,6 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {atom, useRecoilState} from 'recoil'
-
+import axios from 'axios'
 import {NavigationContainer} from '@react-navigation/native'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import LandingScreen from './screens/auth/LandingScreen'
@@ -26,6 +26,21 @@ const Stack = createNativeStackNavigator()
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(authAtom)
+
+  useEffect(() => {
+    requestSignInAuto()
+  }, [])
+
+  const requestSignInAuto = async () => {
+    try {
+      const data = await axios.get('http://localhost:8080/auth/auto', {
+      })
+      console.log(data)
+      setIsLoggedIn(true)
+    } catch (err) {
+      // console.log(err.response.data)
+    }
+  }
 
   return (
     <NavigationContainer>

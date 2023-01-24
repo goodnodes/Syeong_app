@@ -1,26 +1,34 @@
-import React, {useState} from 'react'
+import React, {useState} from "react"
 import {
   FlatList,
   ListRenderItem,
   SafeAreaView,
+  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native'
-import {useRecoilValue} from 'recoil'
-import {map_icon_main3, search_icon_gray8} from '../../../../assets/icons'
-import {poolAtom} from '../../../atoms/pool'
-import {SyeongColors} from '../../../components/Colors'
-import Image from '../../../components/Image/Image'
-import PoolListItem, {PoolData} from '../../../components/ListItem/PoolListItem'
-import RegionModal from './RegionModal'
+} from "react-native"
+import {useSafeAreaInsets} from "react-native-safe-area-context"
+import {useRecoilValue} from "recoil"
+import {
+  map_icon_main3,
+  search_icon_gray4,
+  search_icon_gray8,
+} from "../../../../assets/icons"
+import {poolAtom} from "../../../atoms/pool"
+import {SyeongColors} from "../../../components/Colors"
+import Image from "../../../components/Image/Image"
+import PoolListItem, {PoolData} from "../../../components/ListItem/PoolListItem"
+import RegionModal from "./RegionModal"
 
 const SearchMainScreen = () => {
+  const insets = useSafeAreaInsets()
+
   const poolData = useRecoilValue(poolAtom)
-  const [searchText, setSearchText] = useState<string>()
+  const [searchText, setSearchText] = useState<string>("")
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
   const [selectedRegion, setSelectedRegion] = useState<string[]>([])
   const [poolList, setPoolList] = useState<PoolData[]>(poolData)
@@ -29,7 +37,7 @@ const SearchMainScreen = () => {
   }
   const renderRegionSelectButtonText = () => {
     if (!selectedRegion.length) {
-      return '서울 전체'
+      return "서울 전체"
     } else if (selectedRegion.length === 1) {
       return selectedRegion[0]
     } else {
@@ -38,7 +46,69 @@ const SearchMainScreen = () => {
   }
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={'dark-content'} />
+      <StatusBar barStyle={"dark-content"} />
+      {searchText.length > 0 && (
+        <View
+          style={{
+            position: "absolute",
+            top: insets.top + 60,
+            left: 0,
+            zIndex: 100,
+            width: "100%",
+            paddingHorizontal: 16,
+          }}>
+          <View
+            style={{
+              paddingHorizontal: 16,
+              paddingVertical: 10,
+              backgroundColor: SyeongColors.gray_1,
+              height: 300,
+              borderRadius: 10,
+
+              shadowColor: "#8B95A199",
+              shadowOffset: {
+                width: 0,
+                height: 8,
+              },
+              shadowOpacity: 0.46,
+              shadowRadius: 11.14,
+
+              elevation: 17,
+            }}>
+            <FlatList
+              data={["문정교육회관", "문정교육회관"]}
+              renderItem={({item}) => {
+                return (
+                  <TouchableOpacity>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        marginVertical: 6,
+                        alignItems: "center",
+                      }}>
+                      <Image
+                        source={search_icon_gray4}
+                        style={{width: 24, height: 24, marginRight: 16}}
+                      />
+                      <Text
+                        style={{
+                          color: SyeongColors.gray_6,
+                          fontSize: 16,
+                          fontWeight: "400",
+                          lineHeight: 19.09,
+                          letterSpacing: -0.41,
+                        }}>
+                        {item}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                )
+              }}
+            />
+          </View>
+        </View>
+      )}
+
       <View style={styles.searchContainer}>
         <Image source={search_icon_gray8} style={styles.search_icon_gray8} />
         <TextInput
@@ -63,9 +133,7 @@ const SearchMainScreen = () => {
             }}>
             <View style={styles.regionSelectButton}>
               <Image source={map_icon_main3} style={styles.map_icon_main3} />
-              <Text>
-                {renderRegionSelectButtonText()}
-              </Text>
+              <Text>{renderRegionSelectButtonText()}</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -94,9 +162,9 @@ const styles = StyleSheet.create({
     marginTop: 7,
     marginHorizontal: 20,
     height: 43,
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: SyeongColors.gray_2,
-    alignItems: 'center',
+    alignItems: "center",
     borderRadius: 15,
     paddingLeft: 16,
     marginBottom: 36,
@@ -110,28 +178,28 @@ const styles = StyleSheet.create({
   searchTextInput: {
     color: SyeongColors.gray_8,
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
     lineHeight: 19.09,
     letterSpacing: -0.41,
   },
   listArea: {flex: 1},
   listHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 11,
     paddingHorizontal: 20,
   },
   listHeaderTitle: {
     fontSize: 17,
-    fontWeight: '600',
+    fontWeight: "600",
     lineHeight: 20.29,
     letterSpacing: -0.41,
     color: SyeongColors.gray_8,
   },
   regionSelectButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     height: 30,
     paddingVertical: 6,
     paddingHorizontal: 12,
@@ -139,7 +207,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: SyeongColors.gray_2,
     borderRadius: 8,
-    shadowColor: '#C5CCD366',
+    shadowColor: "#8B95A199",
     shadowOffset: {
       width: 0,
       height: 8,

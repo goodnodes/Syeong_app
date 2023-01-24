@@ -17,10 +17,10 @@ import MySettingProposalScreen from './screens/my/MySettingScreen/MySettingPropo
 import MySettingWithdrawalScreen from './screens/my/MySettingScreen/MySettingWithdrawalScreen'
 import {authAtom} from './atoms/auth'
 import PasswordSignInScreen from './screens/auth/SignInScreen/PasswordSignInScreen'
-import SearchDetailScreen from './screens/SearchDetailScreen'
-import ReviewDetailScreen from './screens/SearchDetailScreen/ReviewDetailScreen'
-import WriteReviewScreen from './screens/SearchDetailScreen/WriteReviewScreen'
-import CompleteScreen from './screens/SearchDetailScreen/CompleteScreen'
+import SearchDetailScreen from './screens/search/SearchDetailScreen'
+import ReviewDetailScreen from './screens/search/SearchDetailScreen/ReviewDetailScreen'
+import WriteReviewScreen from './screens/search/SearchDetailScreen/WriteReviewScreen'
+import CompleteScreen from './screens/search/SearchDetailScreen/CompleteScreen'
 
 const Stack = createNativeStackNavigator()
 

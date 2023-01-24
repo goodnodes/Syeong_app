@@ -17,13 +17,16 @@ import {
   caret_down_icon,
   gear_icon,
   pencil_icon_line,
+  pin_icon_gray5,
 } from '../../../../assets/icons'
 import {SyeongColors} from '../../../components/Colors'
+import SelectDropdown from 'react-native-select-dropdown'
 
 const MyMainScreen = ({navigation}) => {
   const dummy = [0, 1, 2, 3, 4]
   const pagerRef = useRef<PagerView>()
   const [pagerState, setPagerState] = useState<number>(0)
+  const [orderByState, setOrderByState] = useState<string>('최신순')
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -84,6 +87,7 @@ const MyMainScreen = ({navigation}) => {
             ]}>
             리뷰
           </Text>
+          
           {pagerState === 1 && <View style={styles.pagerBar} />}
         </TouchableOpacity>
       </View>
@@ -119,7 +123,8 @@ const MyMainScreen = ({navigation}) => {
                   padding: 16,
                   borderRadius: 10,
                 }}>
-                <Text
+                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                    <Text
                   style={{
                     color: SyeongColors.gray_8,
                     fontSize: 16,
@@ -130,6 +135,14 @@ const MyMainScreen = ({navigation}) => {
                   }}>
                   문정교육회관
                 </Text>
+                                          <TouchableOpacity>
+                        <Image
+                          source={pin_icon_gray5}
+                          style={{width: 24, height: 24}}
+                        />
+                      </TouchableOpacity>
+                  </View>
+
                 <Text
                   style={{
                     color: SyeongColors.gray_4,
@@ -149,8 +162,9 @@ const MyMainScreen = ({navigation}) => {
           data={dummy}
           contentContainerStyle={{paddingHorizontal: 20}}
           ListHeaderComponent={
-            <View style={{alignItems: 'flex-end'}}>
-              <TouchableOpacity>
+            <View style={{alignItems: 'flex-end',                    marginTop: 16,
+                    marginBottom: 11,}}>
+              {/* <TouchableOpacity>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -173,7 +187,61 @@ const MyMainScreen = ({navigation}) => {
                     style={{width: 18, height: 18}}
                   />
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
+
+            <SelectDropdown
+              data={['최신순','오래된순']}
+              onSelect={item => {
+                setOrderByState(item)
+              }}
+              defaultValue={orderByState}
+              dropdownOverlayColor={"transparent"}
+              buttonStyle={{
+                backgroundColor: "transparent",
+                width: 88,
+                height: 20,
+              }}
+              buttonTextStyle={{
+                      color: SyeongColors.gray_4,
+                      fontSize: 15,
+                      fontWeight: '600',
+                      lineHeight: 17.9,
+                      letterSpacing: -0.41,
+                      marginRight: 4,
+              }}
+              dropdownStyle={{
+                width: 90,
+                height: 90,
+                backgroundColor: '#FFFFFF',
+                borderRadius: 15,
+              }}
+              renderCustomizedRowChild={item => {
+                return (
+                  <View
+                    style={{
+                      paddingHorizontal: 16,
+                      borderColor: '#FFFFFF',
+                      borderWidth: 1,
+                      height: 50,
+                      justifyContent: "center",
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        fontWeight: "500",
+                        lineHeight: 32,
+                        color: SyeongColors.gray_6,
+                      }}>
+                      {item}
+                    </Text>
+                  </View>
+                )
+              }}
+            />
+                              <Image
+                    source={caret_down_icon}
+                    style={{width: 18, height: 18, position:'absolute', right: 0}}
+                  />
             </View>
           }
           renderItem={() => {

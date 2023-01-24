@@ -1,8 +1,9 @@
 import {View, Text, TouchableOpacity} from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import {SyeongColors} from '../Colors'
 import Image from '../Image/Image'
 import {useNavigation} from '@react-navigation/native'
+import { pin_icon_gray1, pin_icon_gray3 } from '../../../assets/icons'
 
 export type PoolData = {
   title: string
@@ -15,6 +16,7 @@ type Props = {
 const PoolListItem = (props: Props) => {
   const {title, region, picture} = props.data
   const navigation = useNavigation()
+  const [isPinned, setIsPinned] = useState<boolean>(false)
   return (
     <TouchableOpacity
       onPress={() => {
@@ -27,7 +29,7 @@ const PoolListItem = (props: Props) => {
           backgroundColor: SyeongColors.gray_1,
           marginBottom: 10,
           borderRadius: 10,
-          shadowColor: '#C5CCD399',
+          shadowColor: '#8B95A199',
           shadowOffset: {
             width: 0,
             height: 11,
@@ -37,6 +39,10 @@ const PoolListItem = (props: Props) => {
 
           elevation: 23,
         }}>
+          <TouchableOpacity style={{position: 'absolute', top: 16, right: 16, zIndex: 10}}>
+
+          <Image source={isPinned? pin_icon_gray1:pin_icon_gray3} style={{width: 24, height: 24}}/>
+          </TouchableOpacity>
         <Image
           source={{uri: picture}}
           style={{

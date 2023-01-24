@@ -31,7 +31,7 @@ const MySettingProposalScreen = () => {
           flexDirection: 'row',
           backgroundColor: SyeongColors.gray_1,
           borderRadius: 8,
-          shadowColor: '#C5CCD399',
+          shadowColor: '#8B95A199',
           shadowOffset: {
             width: 0,
             height: 9,
@@ -75,7 +75,7 @@ const MySettingProposalScreen = () => {
           flexDirection: 'row',
           backgroundColor: SyeongColors.gray_1,
           borderRadius: 8,
-          shadowColor: '#C5CCD399',
+          shadowColor: '#8B95A199',
           shadowOffset: {
             width: 0,
             height: 9,

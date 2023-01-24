@@ -17,6 +17,7 @@ const MainTabScreen = () => {
         tabBarStyle: {
           backgroundColor: '#FFFFFF',
           height: 90,
+          paddingTop: 7,paddingBottom: 34
         },
       }}>
       <Tab.Screen

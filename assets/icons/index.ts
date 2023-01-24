@@ -1,5 +1,6 @@
 export const search_icon_white = require('./MagnifyingGlass.png')
 export const search_icon_gray8 = require('./MagnifyingGlass_gray8.png')
+export const search_icon_gray4 = require('./MagnifyingGlass_gray4.png')
 export const user_icon = require('./User.png')
 export const syeong_logo = require('./Syeong.png')
 export const caret_up_linear_gradient = require('./CaretUp.png')

@@ -66,6 +66,7 @@ const EditProfileScreen = ({navigation}) => {
         <BasicButton
           backgroundColor={SyeongColors.sub_2}
           text="저장하기"
+          margin={[0,0,16,0]}
           textColor={SyeongColors.gray_8}
           fullWidth
           onPress={() => {

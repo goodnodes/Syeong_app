@@ -1,4 +1,11 @@
-import React, {useState} from 'react'
+import NaverMapView, {
+  Circle,
+  Marker,
+  Path,
+  Polyline,
+  Polygon,
+} from "react-native-nmap"
+import React, {useState} from "react"
 import {
   Dimensions,
   StatusBar,
@@ -9,7 +16,7 @@ import {
   Share,
   Alert,
   Linking,
-} from 'react-native'
+} from "react-native"
 import Animated, {
   Extrapolation,
   interpolate,
@@ -17,9 +24,9 @@ import Animated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
-} from 'react-native-reanimated'
-import {useSafeAreaInsets} from 'react-native-safe-area-context'
-import Clipboard from '@react-native-clipboard/clipboard'
+} from "react-native-reanimated"
+import {useSafeAreaInsets} from "react-native-safe-area-context"
+import Clipboard from "@react-native-clipboard/clipboard"
 import {
   clipboard_icon,
   map_icon_main3,
@@ -29,39 +36,39 @@ import {
   pin_icon_gray8,
   share_icon,
   share_icon_gray8,
-} from '../../../../assets/icons'
-import BackButton from '../../../components/Button/BackButton'
-import BasicButton from '../../../components/Button/BasicButton'
-import {SyeongColors} from '../../../components/Colors'
-import Image from '../../../components/Image/Image'
-import ReviewBadgeComponent from './ReviewBadgeComponent'
-import ReviewItem from './ReviewItem'
+} from "../../../../assets/icons"
+import BackButton from "../../../components/Button/BackButton"
+import BasicButton from "../../../components/Button/BasicButton"
+import {SyeongColors} from "../../../components/Colors"
+import Image from "../../../components/Image/Image"
+import ReviewBadgeComponent from "./ReviewBadgeComponent"
+import ReviewItem from "./ReviewItem"
 
 const SearchDetailScreen = ({navigation, route}) => {
   const dummy = {
-    title: '문정교육회관',
-    location: '서울 송파구 어쩌구 저쩌구',
-    call: '010-333-3333',
+    title: "문정교육회관",
+    location: "서울 송파구 어쩌구 저쩌구",
+    call: "010-333-3333",
     picture:
-      'https://poi-kyeongseo.com/data/file/yp_program02/1/3698681510_yJgMAXjf_34d98a86196acca842ab0a00977db226616226a2.jpg',
+      "https://poi-kyeongseo.com/data/file/yp_program02/1/3698681510_yJgMAXjf_34d98a86196acca842ab0a00977db226616226a2.jpg",
     review: [
       {
-        name: 'dd',
-        content: '채광이 잘 들어오고 어쩌구 저쩌구',
-        createdAt: '22.13.32 수',
-        tag: ['깨끗한 물', '청결한 샤워실', '편리한 센터 이용'],
+        name: "dd",
+        content: "채광이 잘 들어오고 어쩌구 저쩌구",
+        createdAt: "22.13.32 수",
+        tag: ["깨끗한 물", "청결한 샤워실", "편리한 센터 이용"],
       },
       {
-        name: 'dd',
-        content: '채광이 잘 들어오고 어쩌구 저쩌구',
-        createdAt: '22.13.32 수',
-        tag: ['깨끗한 물', '청결한 샤워실', '편리한 센터 이용'],
+        name: "dd",
+        content: "채광이 잘 들어오고 어쩌구 저쩌구",
+        createdAt: "22.13.32 수",
+        tag: ["깨끗한 물", "청결한 샤워실", "편리한 센터 이용"],
       },
       {
-        name: 'dd',
-        content: '채광이 잘 들어오고 어쩌구 저쩌구',
-        createdAt: '22.13.32 수',
-        tag: ['깨끗한 물', '청결한 샤워실', '편리한 센터 이용'],
+        name: "dd",
+        content: "채광이 잘 들어오고 어쩌구 저쩌구",
+        createdAt: "22.13.32 수",
+        tag: ["깨끗한 물", "청결한 샤워실", "편리한 센터 이용"],
       },
     ],
   }
@@ -96,7 +103,7 @@ const SearchDetailScreen = ({navigation, route}) => {
     try {
       const result = await Share.share({
         message:
-          'React Native | A framework for building native apps using React',
+          "React Native | A framework for building native apps using React",
       })
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -112,28 +119,30 @@ const SearchDetailScreen = ({navigation, route}) => {
     }
   }
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  const P0 = {latitude: 37.564362, longitude: 126.977011}
+  const P1 = {latitude: 37.565051, longitude: 126.978567}
+  const P2 = {latitude: 37.565383, longitude: 126.976292}
   return (
     <View style={{flex: 1}}>
-      <StatusBar barStyle={iconState ? 'dark-content' : 'light-content'} />
+      <StatusBar barStyle={iconState ? "dark-content" : "light-content"} />
       <Animated.View
         style={[
           {
             marginTop: insets.top,
-            width: '100%',
-            alignItems: 'center',
+            width: "100%",
+            alignItems: "center",
             zIndex: 20,
-            position: 'absolute',
+            position: "absolute",
             paddingHorizontal: 20,
             top: -47,
             height: 123,
             paddingTop: insets.top + 7,
-            backgroundColor: '#FFFFFF',
+            backgroundColor: "#FFFFFF",
           },
           animatedOpacity,
         ]}>
-        <View style={{position: 'absolute', top: insets.top + 7, left: 20}}>
+        <View style={{position: "absolute", top: insets.top + 7, left: 20}}>
           <BackButton />
         </View>
 
@@ -141,7 +150,7 @@ const SearchDetailScreen = ({navigation, route}) => {
           style={{
             color: SyeongColors.gray_8,
             fontSize: 17,
-            fontWeight: '600',
+            fontWeight: "600",
             lineHeight: 20.29,
             letterSpacing: -0.41,
           }}>
@@ -149,9 +158,9 @@ const SearchDetailScreen = ({navigation, route}) => {
         </Text>
         <View
           style={{
-            flexDirection: 'row',
-            alignContent: 'center',
-            position: 'absolute',
+            flexDirection: "row",
+            alignContent: "center",
+            position: "absolute",
             top: insets.top + 7,
             right: 20,
           }}>
@@ -170,19 +179,19 @@ const SearchDetailScreen = ({navigation, route}) => {
         style={[
           {
             marginTop: insets.top,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
+            flexDirection: "row",
+            justifyContent: "space-between",
             zIndex: 10,
-            position: 'absolute',
+            position: "absolute",
             paddingHorizontal: 20,
-            width: '100%',
+            width: "100%",
             top: -47,
             height: 123,
             paddingTop: insets.top + 7,
           },
         ]}>
         <BackButton isLight />
-        <View style={{flexDirection: 'row', alignContent: 'center'}}>
+        <View style={{flexDirection: "row", alignContent: "center"}}>
           <TouchableOpacity>
             <Image
               source={share_icon}
@@ -198,10 +207,10 @@ const SearchDetailScreen = ({navigation, route}) => {
       <Image
         source={{uri: dummy.picture}}
         style={{
-          width: '100%',
-          height: Dimensions.get('window').height / 2.5,
+          width: "100%",
+          height: Dimensions.get("window").height / 2.5,
           zIndex: -10,
-          position: 'absolute',
+          position: "absolute",
         }}
       />
       <Animated.ScrollView
@@ -212,7 +221,7 @@ const SearchDetailScreen = ({navigation, route}) => {
         scrollEventThrottle={16}>
         <View
           style={{
-            backgroundColor: 'white',
+            backgroundColor: "white",
             marginTop: 300,
             borderTopLeftRadius: 15,
             borderTopRightRadius: 15,
@@ -236,7 +245,7 @@ const SearchDetailScreen = ({navigation, route}) => {
                 style={{
                   color: SyeongColors.gray_5,
                   fontSize: 15,
-                  fontWeight: '500',
+                  fontWeight: "500",
                   lineHeight: 22,
                   letterSpacing: -0.41,
                   marginRight: 4,
@@ -252,9 +261,9 @@ const SearchDetailScreen = ({navigation, route}) => {
             </View>
             <View
               style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
               }}>
               <View style={styles.rowAlignCenter}>
                 <Image source={phone_icon} style={styles.map_icon_main3} />
@@ -266,7 +275,7 @@ const SearchDetailScreen = ({navigation, route}) => {
                     style={{
                       color: SyeongColors.main_4,
                       fontSize: 15,
-                      fontWeight: '500',
+                      fontWeight: "500",
                       lineHeight: 22,
                       letterSpacing: -0.41,
                       marginRight: 4,
@@ -286,13 +295,13 @@ const SearchDetailScreen = ({navigation, route}) => {
               </View>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('MySettingProposalScreen')
+                  navigation.navigate("MySettingProposalScreen")
                 }}>
                 <Text
                   style={{
                     color: SyeongColors.gray_4,
                     fontSize: 14,
-                    fontWeight: '500',
+                    fontWeight: "500",
                     lineHeight: 16.71,
                     letterSpacing: -0.41,
                   }}>
@@ -305,7 +314,7 @@ const SearchDetailScreen = ({navigation, route}) => {
             <Text
               style={{
                 color: SyeongColors.gray_7,
-                fontWeight: '600',
+                fontWeight: "600",
                 fontSize: 15,
                 lineHeight: 17.9,
                 letterSpacing: -0.41,
@@ -325,6 +334,53 @@ const SearchDetailScreen = ({navigation, route}) => {
               borderWidth={1}
             />
           </View>
+
+          <NaverMapView
+            style={{width: "100%", height: "100%"}}
+            showsMyLocationButton={true}
+            center={{...P0, zoom: 16}}
+            onTouch={e =>
+              console.warn("onTouch", JSON.stringify(e.nativeEvent))
+            }
+            onCameraChange={e =>
+              console.warn("onCameraChange", JSON.stringify(e))
+            }
+            onMapClick={e => console.warn("onMapClick", JSON.stringify(e))}>
+            <Marker
+              coordinate={P0}
+              onClick={() => console.warn("onClick! p0")}
+            />
+            <Marker
+              coordinate={P1}
+              pinColor="blue"
+              onClick={() => console.warn("onClick! p1")}
+            />
+            <Marker
+              coordinate={P2}
+              pinColor="red"
+              onClick={() => console.warn("onClick! p2")}
+            />
+            <Path
+              coordinates={[P0, P1]}
+              onClick={() => console.warn("onClick! path")}
+              width={10}
+            />
+            <Polyline
+              coordinates={[P1, P2]}
+              onClick={() => console.warn("onClick! polyline")}
+            />
+            <Circle
+              coordinate={P0}
+              color={"rgba(255,0,0,0.3)"}
+              radius={200}
+              onClick={() => console.warn("onClick! circle")}
+            />
+            <Polygon
+              coordinates={[P0, P1, P2]}
+              color={`rgba(0, 0, 0, 0.5)`}
+              onClick={() => console.warn("onClick! polygon")}
+            />
+          </NaverMapView>
 
           {/* <View style={styles.reviewContainer}>
             <View style={styles.reviewTitleRow}>
@@ -382,7 +438,7 @@ const SearchDetailScreen = ({navigation, route}) => {
             <Text
               style={{
                 color: SyeongColors.gray_7,
-                fontWeight: '600',
+                fontWeight: "600",
                 fontSize: 15,
                 lineHeight: 17.9,
                 letterSpacing: -0.41,
@@ -413,15 +469,15 @@ const SearchDetailScreen = ({navigation, route}) => {
 
 const styles = StyleSheet.create({
   titleRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 36,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 10,
   },
   title: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
     lineHeight: 21.48,
     letterSpacing: -0.41,
     color: SyeongColors.gray_8,
@@ -431,14 +487,14 @@ const styles = StyleSheet.create({
     paddingVertical: 1,
     paddingHorizontal: 7,
     borderRadius: 999,
-    position: 'absolute',
+    position: "absolute",
     right: 20,
     zIndex: 10,
   },
   laneBadgeText: {
     color: SyeongColors.gray_1,
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
     letterSpacing: -0.41,
     lineHeight: 22.4,
   },
@@ -449,13 +505,13 @@ const styles = StyleSheet.create({
     borderColor: SyeongColors.sub_4,
     width: 24,
     height: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   numberBadgeText: {
     color: SyeongColors.sub_4,
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     lineHeight: 16.71,
     letterSpacing: -0.35,
   },
@@ -466,37 +522,37 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   rowAlignCenter: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginVertical: 6,
   },
   freeInfo: {
     backgroundColor: SyeongColors.gray_1,
     borderRadius: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 22,
     marginBottom: 37,
   },
   reviewContainer: {marginBottom: 24},
   reviewTitleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 13,
   },
   reviewTitle: {
     color: SyeongColors.gray_8,
-    fontWeight: '700',
+    fontWeight: "700",
     fontSize: 16,
     lineHeight: 19.09,
     letterSpacing: -0.41,
   },
   reviewNum: {
     color: SyeongColors.gray_6,
-    fontWeight: '600',
+    fontWeight: "600",
     fontSize: 16,
     lineHeight: 19.09,
     letterSpacing: -0.41,
@@ -504,7 +560,7 @@ const styles = StyleSheet.create({
   pencil_icon: {width: 20, height: 20, marginRight: 4},
   plainText: {
     color: SyeongColors.gray_6,
-    fontWeight: '500',
+    fontWeight: "500",
     fontSize: 14,
     lineHeight: 22,
     letterSpacing: -0.41,

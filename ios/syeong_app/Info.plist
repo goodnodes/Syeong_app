@@ -53,5 +53,9 @@
 	<false/>
 	<key>NMFClientId</key>
 	<string>kyugaoilgw</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>nmap</string>
+	</array>
 </dict>
 </plist>

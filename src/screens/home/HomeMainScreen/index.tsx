@@ -1,6 +1,8 @@
-import React, {useState} from "react"
+import {useFocusEffect} from "@react-navigation/native"
+import React, {useCallback, useEffect, useRef, useState} from "react"
 import {
   Dimensions,
+  FlatList,
   Image,
   ImageBackground,
   ListRenderItem,
@@ -21,12 +23,15 @@ import Animated, {
 } from "react-native-reanimated"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 import SelectDropdown from "react-native-select-dropdown"
-import {useRecoilValue} from "recoil"
+import {useRecoilState, useRecoilValue} from "recoil"
 import {
+  arrow_line_up_icon,
   caret_down_icon,
   caret_up_linear_gradient,
   map_icon,
   pin_icon_gray5,
+  pin_icon_sub4,
+  push_pin_simple_icon,
   search_icon_gray8,
   search_icon_white,
   syeong_logo,
@@ -34,16 +39,40 @@ import {
 } from "../../../../assets/icons"
 import {home_background} from "../../../../assets/images"
 import {regionData} from "../../../../assets/static/region"
-import {poolAtom} from "../../../atoms/pool"
+import {user} from "../../../atoms/auth"
+import {pool, PoolType} from "../../../atoms/pool"
 import {SyeongColors} from "../../../components/Colors"
-import PoolListItem, {PoolData} from "../../../components/ListItem/PoolListItem"
+import PoolListItem from "../../../components/ListItem/PoolListItem"
+import {useMyPoolAdd, useMyPoolDelete} from "../../../hooks/useMyPool"
+import {useUserAtomUpdate} from "../../../hooks/useUserAtom"
 
 const HomeMainScreen = ({navigation, route}) => {
-  const dummy = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
+  const [userAtom, setUserAtom] = useRecoilState(user)
+  const [poolAtom, setPool] = useRecoilState(pool)
   const [iconState, setIconState] = useState<boolean>(false)
   const [selectedRegion, setSelectedRegion] = useState<string>(regionData[0])
-  const poolData = useRecoilValue(poolAtom)
+  const [myPoolData, setMyPoolData] = useState<PoolType[]>([])
+  const [displayPoolData, setDisplayPoolData] = useState<PoolType[]>(poolAtom)
+  const flatListRef = useRef<FlatList>()
+
+  useFocusEffect(
+    useCallback(() => {
+      useUserAtomUpdate()
+    }, []),
+  )
+
+  useEffect(() => {
+    const poolData = poolAtom.filter(el => {
+      return userAtom.mypools?.includes(el._id)
+    })
+    if (poolData.length === 0) setMyPoolData([])
+    setMyPoolData(poolData)
+  }, [userAtom.mypools])
+
+  useEffect(() => {
+    setDisplayPoolData(poolAtom.filter(el => el.region === selectedRegion))
+  }, [selectedRegion, poolAtom])
 
   const insets = useSafeAreaInsets()
   const offset = useSharedValue(0)
@@ -70,6 +99,14 @@ const HomeMainScreen = ({navigation, route}) => {
     return {opacity}
   })
 
+  const onPressPin = async (poolid: string) => {
+    if (userAtom.mypools?.includes(poolid)) {
+      await useMyPoolDelete(poolid)
+    } else {
+      await useMyPoolAdd(poolid)
+    }
+  }
+
   const renderFirstItem = () => {
     return (
       <View>
@@ -90,69 +127,108 @@ const HomeMainScreen = ({navigation, route}) => {
         <View style={styles.myPool}>
           <View style={styles.myPoolTitle}>
             <Text style={styles.myPoolText}>🏊‍♀️ 나의 고정 수영장</Text>
-            <Text style={styles.myPoolSubText}>2/5</Text>
+            <Text style={styles.myPoolSubText}>{myPoolData.length}/5</Text>
           </View>
           <View style={{marginVertical: 16}}>
-            <ScrollView
-              indicatorStyle="white"
-              horizontal
-              contentContainerStyle={{paddingHorizontal: 20}}>
-              {dummy.map((item, index) => {
-                return (
-                  <View
-                    key={index}
+            {myPoolData.length === 0 ? (
+              <View style={{width: "100%"}}>
+                <View
+                  style={{
+                    height: 107,
+                    marginHorizontal: 16,
+                    borderColor: SyeongColors.gray_2,
+                    borderWidth: 1.5,
+                    borderRadius: 10,
+                    borderStyle: "dashed",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "row",
+                  }}>
+                  <Image
+                    source={push_pin_simple_icon}
+                    style={{width: 24, height: 24, marginRight: 8}}
+                  />
+                  <Text
                     style={{
-                      width: Dimensions.get("screen").width * 0.8, //device 크기로 변환
-                      height: 107,
-                      backgroundColor: "#FFFFFF",
-                      borderRadius: 10,
-                      marginRight: 8,
-                      marginBottom: 10,
-                      paddingTop: 16,
-                      paddingHorizontal: 16,
+                      color: SyeongColors.gray_4,
+                      fontSize: 15,
+                      fontWeight: "600",
+                      lineHeight: 22,
+                      letterSpacing: -0.41,
                     }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}>
-                      <Text
-                        style={{
-                          color: SyeongColors.gray_8,
-                          fontSize: 16,
-                          fontWeight: "600",
-                          lineHeight: 19.09,
-                          letterSpacing: -0.41,
-                          marginBottom: 8,
-                        }}>
-                        문정교육회관
-                      </Text>
-                      <TouchableOpacity>
-                        <Image
-                          source={pin_icon_gray5}
-                          style={{width: 24, height: 24}}
-                        />
-                      </TouchableOpacity>
-                    </View>
+                    고정 수영장을 설정할 수 있어요!
+                  </Text>
+                </View>
+              </View>
+            ) : (
+              <ScrollView
+                indicatorStyle="white"
+                horizontal
+                contentContainerStyle={{paddingHorizontal: 20}}>
+                {myPoolData.map((item, index) => {
+                  return (
+                    <TouchableOpacity key={index} onPress={()=>{navigation.navigate('SearchDetailScreen', {item: item})}}>
 
-                    <Text
+                    <View
+                      
                       style={{
-                        color: SyeongColors.gray_4,
-                        fontSize: 15,
-                        fontWeight: "500",
-                        lineHeight: 22,
-                        letterSpacing: -0.41,
+                        width: Dimensions.get("screen").width * 0.8, //device 크기로 변환
+                        height: 107,
+                        backgroundColor: "#FFFFFF",
+                        borderRadius: 10,
+                        marginRight: 8,
+                        marginBottom: 10,
+                        paddingTop: 16,
+                        paddingHorizontal: 16,
                       }}>
-                      서울 송파구 어쩌구 저쩌구
-                    </Text>
-                  </View>
-                )
-              })}
-            </ScrollView>
-          </View>
-        </View>
-        <View style={styles.poolListTitle}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}>
+                        <Text
+                          style={{
+                            color: SyeongColors.gray_8,
+                            fontSize: 16,
+                            fontWeight: "600",
+                            lineHeight: 19.09,
+                            letterSpacing: -0.41,
+                            marginBottom: 8,
+                          }}>
+                          {item.name}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => {
+                            onPressPin(item._id)
+                          }}>
+                          <Image
+                            source={pin_icon_sub4}
+                            style={{width: 24, height: 24}}
+                            />
+                        </TouchableOpacity>
+                      </View>
+
+                      <Text
+                        numberOfLines={1}
+                        style={{
+                          color: SyeongColors.gray_4,
+                          fontSize: 15,
+                          fontWeight: "500",
+                          lineHeight: 22,
+                          letterSpacing: -0.41,
+                        }}>
+                        {item.address}
+                      </Text>
+                    </View>
+                </TouchableOpacity>
+                  )
+                })}
+              </ScrollView>
+            )}
+            </View>
+            </View>
+            <View style={styles.poolListTitle}>
           <View style={styles.poolListButton}>
             <Image source={map_icon} style={styles.map_icon} />
 
@@ -206,7 +282,9 @@ const HomeMainScreen = ({navigation, route}) => {
             />
             <Image source={caret_down_icon} style={styles.caret_down} />
           </View>
-          <Text style={styles.mediumText}>모든 수영장 12</Text>
+          <Text style={styles.mediumText}>
+            모든 수영장 {displayPoolData.length}
+          </Text>
         </View>
       </View>
     )
@@ -222,14 +300,14 @@ const HomeMainScreen = ({navigation, route}) => {
           </Text>
           <Image source={caret_up_linear_gradient} style={styles.caret_up} />
         </View>
+        {renderFirstItem()}
       </View>
     )
   }
-
-  const renderFlatListItem: ListRenderItem<PoolData> = ({item, index}) => {
-    if (index === 0) {
-      return renderFirstItem()
-    }
+  const renderFlatListItem: ListRenderItem<PoolType> = ({item, index}) => {
+    // if (index === 0) {
+    //   return renderFirstItem()
+    // }
     return (
       <View
         style={{backgroundColor: SyeongColors.gray_1, paddingHorizontal: 20}}>
@@ -251,52 +329,47 @@ const HomeMainScreen = ({navigation, route}) => {
               zIndex: 20,
               position: "absolute",
               paddingHorizontal: 20,
-              top: -47,
-              height: 123,
-              paddingTop: insets.top-38,
-              backgroundColor: "#FFFFFF",
-              flexDirection: 'row',
-              justifyContent: 'space-between'
+              top: -50,
+              height: 99,
+              paddingTop: insets.top,
+              backgroundColor: SyeongColors.gray_1,
+              flexDirection: "row",
+              justifyContent: "space-between",
             },
             animatedOpacity,
           ]}>
-            
-
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("SearchMainScreen")
-          }}
-          style={{zIndex: 10}}>
-          <Image
-            source={search_icon_white}
-            style={[
-              {
-                width: 24,
-                height: 24,
-
-              },
-              iconState ? {tintColor: SyeongColors.gray_8} : null,
-            ]}
-          />
-        </TouchableOpacity>
-                <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("MyMainScreen")
-          }}
-          >
-          <Image
-            source={user_icon}
-            style={[
-              {
-                width: 24,
-                height: 24,
-
-              },
-              iconState ? {tintColor: SyeongColors.gray_8} : null,
-            ]}
-          />
-        </TouchableOpacity>
-          </Animated.View>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("SearchMainScreen")
+            }}
+            style={{zIndex: 10}}>
+            <Image
+              source={search_icon_white}
+              style={[
+                {
+                  width: 24,
+                  height: 24,
+                },
+                iconState ? {tintColor: SyeongColors.gray_8} : null,
+              ]}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("MyMainScreen")
+            }}>
+            <Image
+              source={user_icon}
+              style={[
+                {
+                  width: 24,
+                  height: 24,
+                },
+                iconState ? {tintColor: SyeongColors.gray_8} : null,
+              ]}
+            />
+          </TouchableOpacity>
+        </Animated.View>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate("SearchMainScreen")
@@ -309,7 +382,7 @@ const HomeMainScreen = ({navigation, route}) => {
                 width: 24,
                 height: 24,
                 position: "absolute",
-                top: insets.top + 7,
+                top: insets.top + 12,
                 left: 20,
               },
               iconState ? {tintColor: SyeongColors.gray_8} : null,
@@ -328,7 +401,7 @@ const HomeMainScreen = ({navigation, route}) => {
                 width: 24,
                 height: 24,
                 position: "absolute",
-                top: insets.top + 7,
+                top: insets.top + 12,
                 right: 20,
                 zIndex: 100,
               },
@@ -337,12 +410,45 @@ const HomeMainScreen = ({navigation, route}) => {
           />
         </TouchableOpacity>
         <Animated.FlatList
-          data={poolData}
+          data={displayPoolData}
           renderItem={renderFlatListItem}
           // stickyHeaderIndices={[1]}
           onScroll={scrollHandler}
           ListHeaderComponent={renderListHeaderItem()}
+          contentContainerStyle={{paddingBottom: 30}}
+          ref={flatListRef}
         />
+        <TouchableOpacity
+          onPress={() => {
+            flatListRef.current?.scrollToIndex({index: 0, animated: true})
+          }}>
+          <View
+            style={{
+              backgroundColor: SyeongColors.gray_2,
+              width: 60,
+              height: 60,
+              borderRadius: 999,
+              position: "absolute",
+              right: 20,
+              bottom: 50,
+              justifyContent: "center",
+              alignItems: "center",
+              shadowColor: "#8B95A199",
+              shadowOffset: {
+                width: 0,
+                height: 6,
+              },
+              shadowOpacity: 0.57,
+              shadowRadius: 5,
+
+              elevation: 10,
+            }}>
+            <Image
+              source={arrow_line_up_icon}
+              style={{width: 28, height: 28}}
+            />
+          </View>
+        </TouchableOpacity>
       </ImageBackground>
     </View>
   )

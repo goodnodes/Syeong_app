@@ -1,22 +1,39 @@
-import {View, Text, SafeAreaView, StatusBar, StyleSheet} from "react-native"
-import React from "react"
-import {SyeongColors} from "../../../components/Colors"
-import BackButton from "../../../components/Button/BackButton"
-import Header from "../../../components/Header/Header"
+import React, {useState} from "react"
+import {
+  Alert,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native"
+import {traffic_cone_icon} from "../../../../assets/icons"
+import {DELETE_DeleteUserAccount} from "../../../axios/user"
 import BasicButton from "../../../components/Button/BasicButton"
+import {SyeongColors} from "../../../components/Colors"
+import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
+import DoubleModal from "../../../components/Modal/DoubleModal"
+import {useSignOut} from "../../../hooks/useAuth"
 
 const MySettingWithdrawalScreen = () => {
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
+  const requestWithdrawal = async () => {
+    try {
+      await DELETE_DeleteUserAccount()
+      useSignOut()
+    } catch (err) {
+      Alert.alert("탈퇴 요청에 실패했습니다. 다시 시도해주세요")
+      console.log(err)
+    }
+  }
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <StatusBar barStyle={"dark-content"} />
-      <Header backgroundColor={SyeongColors.gray_1}>
-        <View style={styles.backButton}>
-          <BackButton />
-        </View>
-        <View style={styles.header}>
-          <Text style={styles.title}>계정 탈퇴하기</Text>
-        </View>
-      </Header>
+
+      <HaederWithTitle
+        backgroundColor={SyeongColors.gray_1}
+        title="계정 탈퇴하기"
+      />
       <Text
         style={{
           marginTop: 69,
@@ -66,17 +83,31 @@ const MySettingWithdrawalScreen = () => {
           + 셩만의 다양한 혜택
         </Text>
       </View>
-      <View style={{marginHorizontal: 16, marginTop: 'auto'}}>
-
-      <BasicButton
-        text={"그럼에도 탈퇴하기"}
-        textColor={SyeongColors.gray_4}
-        backgroundColor={SyeongColors.gray_1}
-        fullWidth
-        margin={[0,0,16,0]}
-        onPress={()=>{}}
+      <View style={{marginHorizontal: 16, marginTop: "auto"}}>
+        <BasicButton
+          text={"그럼에도 탈퇴하기"}
+          textColor={SyeongColors.gray_4}
+          backgroundColor={SyeongColors.gray_1}
+          fullWidth
+          margin={[0, 0, 16, 0]}
+          onPress={() => {
+            setIsModalVisible(true)
+          }}
         />
-        </View>
+      </View>
+      <DoubleModal
+        image={traffic_cone_icon}
+        mainText={"계정 탈퇴할까요?"}
+        subText={"셩에서 탈퇴할게요\n계정 가입 정보는 영구적으로 삭제합니다"}
+        isVisible={isModalVisible}
+        setIsVisible={setIsModalVisible}
+        leftButtonText={"아니요"}
+        onPressLeftButton={() => {
+          setIsModalVisible(false)
+        }}
+        rightButtonText={"탈퇴하기"}
+        onPressRightButton={requestWithdrawal}
+      />
     </SafeAreaView>
   )
 }
@@ -85,23 +116,6 @@ const styles = StyleSheet.create({
   safeAreaView: {
     flex: 1,
     backgroundColor: SyeongColors.gray_1,
-  },
-  header: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  backButton: {
-    position: "absolute",
-    top: 7,
-    left: 20,
-    zIndex: 10,
-  },
-  title: {
-    color: SyeongColors.gray_8,
-    fontSize: 17,
-    lineHeight: 20.29,
-    letterSpacing: -0.41,
-    fontWeight: "600",
   },
   box: {
     marginVertical: 4,
@@ -116,12 +130,12 @@ const styles = StyleSheet.create({
     shadowColor: "#8B95A199",
     shadowOffset: {
       width: 0,
-      height: 9,
+      height: 6,
     },
-    shadowOpacity: 0.5,
-    shadowRadius: 12.35,
+    shadowOpacity: 0.57,
+    shadowRadius: 5,
 
-    elevation: 19,
+    elevation: 10,
   },
 })
 

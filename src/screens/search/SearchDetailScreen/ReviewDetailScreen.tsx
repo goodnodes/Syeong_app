@@ -6,39 +6,33 @@ import {
   StatusBar,
   TouchableOpacity,
   FlatList,
-} from 'react-native'
-import React from 'react'
-import Header from '../../../components/Header/Header'
-import BackButton from '../../../components/Button/BackButton'
-import {SyeongColors} from '../../../components/Colors'
-import ReviewBadgeComponent from './ReviewBadgeComponent'
-import Image from '../../../components/Image/Image'
-import ReviewItem from './ReviewItem'
-import {pencil_icon} from '../../../../assets/icons'
+} from "react-native"
+import React from "react"
+import ReviewBadgeComponent from "./ReviewBadgeComponent"
+import Image from "../../../components/Image/Image"
+import ReviewItem from "./ReviewItem"
+import {pencil_icon} from "../../../../assets/icons"
+import BackButton from "../../../components/Button/BackButton"
+import {SyeongColors} from "../../../components/Colors"
+import Header from "../../../components/Header/Header"
+import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
 
 const ReviewDetailScreen = ({navigation, route}) => {
-  const {data} = route.params
+  const {reviews,topTags, name} = route.params
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={'dark-content'} />
-      <Header backgroundColor="#FFFFFF">
-        <View style={styles.backButton}>
-          <BackButton />
-        </View>
-        <View style={styles.header}>
-          <Text style={styles.title}>{data.title}</Text>
-        </View>
-      </Header>
+      <StatusBar barStyle={"dark-content"} />
+      <HaederWithTitle backgroundColor="#FFFFFF" title={name} />
       <View style={styles.reviewContainer}>
         <View style={styles.reviewTitleRow}>
           <View style={styles.rowAlignCenter}>
             <Text style={styles.reviewTitle}>수영장 리뷰 </Text>
-            <Text style={styles.reviewNum}>12</Text>
+            <Text style={styles.reviewNum}>{reviews.length}</Text>
           </View>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('WriteReviewScreen', {
-                data: {title: data.title},
+              navigation.navigate("WriteReviewScreen", {
+                data: {title: name},
               })
             }}>
             <View style={styles.rowAlignCenter}>
@@ -49,7 +43,7 @@ const ReviewDetailScreen = ({navigation, route}) => {
         </View>
       </View>
       <FlatList
-        data={data.review}
+        data={reviews}
         renderItem={({item, index}) => {
           return (
             <View
@@ -62,7 +56,7 @@ const ReviewDetailScreen = ({navigation, route}) => {
                   borderTopRightRadius: 8,
                   borderTopLeftRadius: 8,
                 },
-                index === data.review.length - 1 && {
+                index === reviews.length - 1 && {
                   borderBottomLeftRadius: 8,
                   borderBottomRightRadius: 8,
                 },
@@ -74,16 +68,16 @@ const ReviewDetailScreen = ({navigation, route}) => {
         contentContainerStyle={{paddingBottom: 20, paddingHorizontal: 20}}
         ListHeaderComponent={
           <View style={{marginBottom: 4}}>
-            <ReviewBadgeComponent
-              prize={1}
-              reviewNum={10}
-              content={'청결한 샤워실'}
-            />
-            <ReviewBadgeComponent
-              prize={2}
-              reviewNum={8}
-              content={'깨끗한 물'}
-            />
+            {topTags.map((el, index, array) => (
+              <ReviewBadgeComponent
+                key={index}
+                prize={
+                  index === 1 && array[0].Value === el.Value ? 1 : index + 1
+                }
+                reviewNum={el.Value}
+                content={el.Key}
+              />
+            ))}
           </View>
         }
       />
@@ -93,41 +87,24 @@ const ReviewDetailScreen = ({navigation, route}) => {
 const styles = StyleSheet.create({
   safeAreaView: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 7,
-    left: 20,
-    zIndex: 10,
-  },
-  header: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    color: SyeongColors.gray_8,
-    fontSize: 17,
-    fontWeight: '600',
-    lineHeight: 20.29,
-    letterSpacing: -0.41,
+    backgroundColor: "#FFFFFF",
   },
   reviewContainer: {marginBottom: 24, paddingHorizontal: 20, marginTop: 48},
   reviewTitleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   reviewTitle: {
     color: SyeongColors.gray_8,
-    fontWeight: '700',
+    fontWeight: "700",
     fontSize: 16,
     lineHeight: 19.09,
     letterSpacing: -0.41,
   },
   reviewNum: {
     color: SyeongColors.gray_6,
-    fontWeight: '600',
+    fontWeight: "600",
     fontSize: 16,
     lineHeight: 19.09,
     letterSpacing: -0.41,
@@ -135,7 +112,7 @@ const styles = StyleSheet.create({
   pencil_icon: {width: 20, height: 20, marginRight: 4},
   plainText: {
     color: SyeongColors.gray_6,
-    fontWeight: '500',
+    fontWeight: "500",
     fontSize: 14,
     lineHeight: 22,
     letterSpacing: -0.41,
@@ -147,8 +124,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   rowAlignCenter: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
 })
 

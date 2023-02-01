@@ -1,10 +1,7 @@
 import {View, Text, StatusBar, StyleSheet, Alert} from "react-native"
 import React, {useState} from "react"
 import {SafeAreaView} from "react-native-safe-area-context"
-import axios from "axios"
 import CookieManager from "@react-native-cookies/cookies"
-import Header from "../../../components/Header/Header"
-import BackButton from "../../../components/Button/BackButton"
 import Title from "../../../components/Typography/Title"
 import BasicTextInput from "../../../components/TextInput/BasicTextInput"
 import BasicButton from "../../../components/Button/BasicButton"
@@ -12,6 +9,8 @@ import {SyeongColors} from "../../../components/Colors"
 import {useSetRecoilState} from "recoil"
 import {authAtom} from "../../../atoms/auth"
 import {POST_SignIn} from "../../../axios/auth"
+import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
+import Config from "react-native-config"
 
 const PasswordSignInScreen = ({navigation, route}) => {
   const {pnum} = route.params
@@ -26,13 +25,10 @@ const PasswordSignInScreen = ({navigation, route}) => {
   const requestSignIn = async () => {
     try {
       const data = await POST_SignIn(pnum, password)
-      // console.log(data.headers)
-      // console.log(data.data)
       const result = await CookieManager.setFromResponse(
-        "http://localhost:8080",
-        data.headers["set-cookie"][0],
+        Config.SERVER_URL,
+        data.headers['set-cookie']?.[0].split('Domain=localhost; ').join('')
       )
-      console.log(result)
       setIsLoggedIn(true)
     } catch (err: any) {
       if (err.response.data.err === "invalid") {
@@ -47,9 +43,7 @@ const PasswordSignInScreen = ({navigation, route}) => {
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <StatusBar barStyle={"dark-content"} />
-      <Header backgroundColor={SyeongColors.gray_1}>
-        <BackButton />
-      </Header>
+      <HaederWithTitle backgroundColor={SyeongColors.gray_1} title={"로그인"} />
       <View style={styles.container}>
         <Title text="비밀번호 입력" margin={[0, 0, 24, 0]} />
         <BasicTextInput
@@ -65,7 +59,7 @@ const PasswordSignInScreen = ({navigation, route}) => {
         <View style={styles.marginBelowOtp}>
           {isInValid && (
             <Text style={styles.invalidText}>
-              인증번호가 잘못 입력되었습니다.
+              비밀번호가 잘못 입력되었습니다.
             </Text>
           )}
         </View>
@@ -76,6 +70,7 @@ const PasswordSignInScreen = ({navigation, route}) => {
           backgroundColor={SyeongColors.sub_2}
           textColor={SyeongColors.gray_8}
           disabled={!password} //validation needed
+          disableTextColor={SyeongColors.sub_OFF_1}
           onPress={onPressButton}
         />
       </View>

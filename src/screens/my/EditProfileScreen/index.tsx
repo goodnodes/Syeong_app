@@ -1,29 +1,37 @@
-import {View, Text, StyleSheet, TextInput} from 'react-native'
-import React, {useState} from 'react'
-import {SafeAreaView} from 'react-native-safe-area-context'
-import Header from '../../../components/Header/Header'
-import {SyeongColors} from '../../../components/Colors'
-import BackButton from '../../../components/Button/BackButton'
+import React, { useState } from 'react'
+import { Alert, StyleSheet, Text, TextInput, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { useRecoilState } from 'recoil'
+import { user } from '../../../atoms/auth'
+import { POST_EditMyInfo } from '../../../axios/user'
 import BasicButton from '../../../components/Button/BasicButton'
+import { SyeongColors } from '../../../components/Colors'
+import HaederWithTitle from '../../../components/Header/HeaderWithTitle'
 
 const EditProfileScreen = ({navigation}) => {
-  const [nickname, setNickname] = useState<string>('rr')
-  const [objective, setObjective] = useState<string>('')
+  const [userAtom, setUserAtom] = useRecoilState(user)
+  const [nickname, setNickname] = useState<string>(userAtom.privateinfo.nickname)
+  const [goal, setGoal] = useState<string>(userAtom.privateinfo.goal || '')
+
+  const updateUserProfile = async()=>{
+    try{
+      const data = await POST_EditMyInfo(userAtom.privateinfo.nickname, nickname, goal)
+      navigation.pop()
+    }catch(err){
+      Alert.alert('프로필 편집', '실패했습니다! 다시 시도해주세요')
+      console.log(err)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <Header backgroundColor={SyeongColors.gray_1}>
-        <View style={styles.backButton}>
-          <BackButton />
-        </View>
-        <View style={styles.header}>
-          <Text style={styles.title}>프로필 편집</Text>
-        </View>
-      </Header>
+      <HaederWithTitle backgroundColor={SyeongColors.gray_1} title={'프로필 편집'}/>
       <View style={styles.container}>
         <View style={styles.component}>
           <Text style={styles.componentTitle}>닉네임</Text>
           <TextInput
             value={nickname}
+            defaultValue={userAtom.privateinfo.nickname}
             onChangeText={text => {
               setNickname(text)
             }}
@@ -32,15 +40,16 @@ const EditProfileScreen = ({navigation}) => {
         </View>
         <View style={styles.component}>
           <Text style={styles.componentTitle}>목표</Text>
-          <View style={styles.objectiveView}>
+          <View style={styles.goalView}>
             <TextInput
-              style={styles.objectiveTextInput}
+              style={styles.goalTextInput}
+              defaultValue={userAtom.privateinfo.goal||''}
               placeholder="나만의 운동 목표를 정해 봐요!"
               placeholderTextColor={SyeongColors.gray_4}
               multiline
-              value={objective}
+              value={goal}
               onChangeText={text => {
-                setObjective(text)
+                setGoal(text)
               }}
               maxLength={40}
               autoComplete="off"
@@ -57,7 +66,7 @@ const EditProfileScreen = ({navigation}) => {
                 bottom: 16,
                 right: 16,
               }}>
-              {objective.length} / 40
+              {goal.length} / 40
             </Text>
           </View>
         </View>
@@ -70,7 +79,7 @@ const EditProfileScreen = ({navigation}) => {
           textColor={SyeongColors.gray_8}
           fullWidth
           onPress={() => {
-            navigation.goBack()
+            updateUserProfile()
           }}
         />
       </View>
@@ -84,23 +93,6 @@ const styles = StyleSheet.create({
   safeAreaView: {
     flex: 1,
     backgroundColor: SyeongColors.gray_1,
-  },
-  header: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 7,
-    left: 20,
-    zIndex: 10,
-  },
-  title: {
-    color: SyeongColors.gray_8,
-    fontSize: 17,
-    lineHeight: 20.29,
-    letterSpacing: -0.41,
-    fontWeight: '600',
   },
   container: {
     flex: 1,
@@ -129,7 +121,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.41,
     paddingHorizontal: 16,
   },
-  objectiveView: {
+  goalView: {
     height: 96,
     width: '100%',
     borderRadius: 8,
@@ -137,7 +129,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
-  objectiveTextInput: {
+  goalTextInput: {
     fontSize: 16,
     fontWeight: '500',
     lineHeight: 19.09,

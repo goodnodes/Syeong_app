@@ -1,28 +1,27 @@
-import {View, Text} from 'react-native'
-import React from 'react'
-import {SyeongColors} from '../../../components/Colors'
-type ReviewData = {
-  name: string
-  createdAt: string
-  tag: string[]
-  content: string
-}
+import {View, Text} from "react-native"
+import React from "react"
+import {SyeongColors} from "../../../components/Colors"
+import {ReviewType} from "."
+import {useDateFormat} from "../../../hooks/useDate"
+import {useRoute} from "@react-navigation/native"
 
 type Props = {
-  review: ReviewData
+  review: ReviewType
 }
 const ReviewItem = (props: Props) => {
-  const {name, createdAt, tag, content} = props.review
+  const route = useRoute()
+  const {nickname, createdat, textreview, keywordreviews, editdate} =
+    props.review
   return (
     <View>
       <View
         style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
+          flexDirection: "row",
+          flexWrap: "wrap",
           marginBottom: 16,
           marginTop: 12,
         }}>
-        {tag.map((item, index) => {
+        {keywordreviews.map((item, index) => {
           return (
             <View
               key={index}
@@ -33,8 +32,8 @@ const ReviewItem = (props: Props) => {
                 borderRadius: 8,
                 paddingVertical: 9.5,
                 paddingHorizontal: 13,
-                justifyContent: 'center',
-                alignItems: 'center',
+                justifyContent: "center",
+                alignItems: "center",
                 marginRight: 4,
                 marginVertical: 4,
               }}>
@@ -42,7 +41,7 @@ const ReviewItem = (props: Props) => {
                 style={{
                   color: SyeongColors.gray_6,
                   fontSize: 14,
-                  fontWeight: '500',
+                  fontWeight: "500",
                   lineHeight: 16.71,
                   letterSpacing: -0.41,
                 }}>
@@ -54,47 +53,49 @@ const ReviewItem = (props: Props) => {
       </View>
       <View style={{marginBottom: 12}}>
         <Text
+          numberOfLines={route.name === "SearchDetailScreen" ? 2 : undefined}
           style={{
             color: SyeongColors.gray_6,
             fontSize: 14,
-            fontWeight: '500',
+            fontWeight: "500",
             lineHeight: 22,
             letterSpacing: -0.41,
           }}>
-          {content}
+          {textreview}
         </Text>
       </View>
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
+          flexDirection: "row",
+          alignItems: "center",
           marginBottom: 12,
         }}>
         <Text
           style={{
             color: SyeongColors.gray_8,
             fontSize: 14,
-            fontWeight: '600',
+            fontWeight: "600",
             lineHeight: 22,
             letterSpacing: -0.41,
             marginRight: 8,
           }}>
-          {name}
+          {nickname}
         </Text>
         <Text
           style={{
             color: SyeongColors.gray_4,
             fontSize: 14,
-            fontWeight: '500',
+            fontWeight: "500",
             lineHeight: 22,
             letterSpacing: -0.41,
           }}>
-          {createdAt}
+          {editdate ? useDateFormat(editdate) : useDateFormat(createdat)}
+          {editdate && "(수정됨)"}
         </Text>
       </View>
       <View
         style={{
-          width: '100%',
+          width: "100%",
           height: 1,
           backgroundColor: SyeongColors.gray_2,
           marginBottom: 8,

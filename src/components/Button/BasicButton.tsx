@@ -16,6 +16,7 @@ type BasicButtonProps = {
   borderRadius?: number
   borderWidth?: number
   onPress: () => void
+  disableTextColor?:string
 }
 
 const BasicButton = (props: BasicButtonProps) => {
@@ -32,6 +33,7 @@ const BasicButton = (props: BasicButtonProps) => {
     disabled,
     borderRadius,
     borderWidth,
+    disableTextColor,
     onPress,
   } = props
   return (
@@ -64,7 +66,7 @@ const BasicButton = (props: BasicButtonProps) => {
             styles.text,
             {color: textColor},
             textSize ? {fontSize: textSize} : null,
-            disabled ? {color: SyeongColors.sub_OFF_1} : null,
+            disableTextColor && disabled ?  {color: disableTextColor}: null,
           ]}>
           {text}
         </Text>

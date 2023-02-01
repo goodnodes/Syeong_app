@@ -1,5 +1,5 @@
-import {View, Text, StyleSheet} from 'react-native'
 import React from 'react'
+import { StyleSheet, View } from 'react-native'
 
 type HeaderProps = {
   backgroundColor: string
@@ -30,9 +30,9 @@ const Header = (props: HeaderProps) => {
 
 const styles = StyleSheet.create({
   header: {
-    height: 31,
+    height: 36,
     paddingHorizontal: 20,
-    paddingTop: 7,
+    paddingTop: 12,
   },
 })
 

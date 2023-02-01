@@ -1,11 +1,11 @@
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native'
-import React, {useState} from 'react'
-import Modal from 'react-native-modal'
-import {SyeongColors} from '../../../components/Colors'
-import Image from '../../../components/Image/Image'
-import {map_icon_main3, restart_icon} from '../../../../assets/icons'
-import {regionData} from '../../../../assets/static/region'
-import BasicButton from '../../../components/Button/BasicButton'
+import {View, Text, TouchableOpacity, StyleSheet} from "react-native"
+import React, {useState} from "react"
+import Modal from "react-native-modal"
+import {SyeongColors} from "../../../components/Colors"
+import Image from "../../../components/Image/Image"
+import {map_icon_main3, restart_icon} from "../../../../assets/icons"
+import {regionData} from "../../../../assets/static/region"
+import BasicButton from "../../../components/Button/BasicButton"
 
 type Props = {
   isVisible: boolean
@@ -19,8 +19,9 @@ const RegionModal = (props: Props) => {
 
   const [tempSelectedRegion, setTempSelectedRegion] =
     useState<string[]>(selectedRegion)
+
   const onPressRegionButton = (region: string) => {
-    if (selectedRegion.includes(region)) {
+    if (tempSelectedRegion.includes(region)) {
       setTempSelectedRegion(tempSelectedRegion.filter(item => item !== region))
     } else {
       setTempSelectedRegion([...tempSelectedRegion, region])
@@ -33,6 +34,32 @@ const RegionModal = (props: Props) => {
     setSelectedRegion(tempSelectedRegion)
     setIsVisible(false)
   }
+
+  const renderItem = (region: string, index: number) => {
+    return (
+      <TouchableOpacity
+        key={index}
+        onPress={() => {
+          onPressRegionButton(region)
+        }}>
+        <View
+          style={[
+            styles.regionButton,
+            tempSelectedRegion.includes(region) && styles.selectedRegionButton,
+          ]}>
+          <Text
+            style={[
+              styles.regionButtonText,
+              tempSelectedRegion.includes(region) &&
+                styles.selectedRegionButtonText,
+            ]}>
+            {region}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    )
+  }
+
   return (
     <Modal
       isVisible={isVisible}
@@ -44,9 +71,9 @@ const RegionModal = (props: Props) => {
         setTempSelectedRegion(selectedRegion)
         setIsVisible(false)
       }}
-      animationIn={'zoomIn'}
-      animationOut={'zoomOut'}
-      backdropColor={'#74747480'}
+      animationIn={"zoomIn"}
+      animationOut={"zoomOut"}
+      backdropColor={"#74747480"}
       style={styles.fullScreen}>
       <View style={styles.modalView}>
         <View style={styles.titleRow}>
@@ -63,29 +90,7 @@ const RegionModal = (props: Props) => {
         </View>
         <View style={styles.regionButtonsArea}>
           {regionData.map((region, index) => {
-            return (
-              <TouchableOpacity
-                key={index}
-                onPress={() => {
-                  onPressRegionButton(region)
-                }}>
-                <View
-                  style={[
-                    styles.regionButton,
-                    tempSelectedRegion.includes(region) &&
-                      styles.selectedRegionButton,
-                  ]}>
-                  <Text
-                    style={[
-                      styles.regionButtonText,
-                      tempSelectedRegion.includes(region) &&
-                        styles.selectedRegionButtonText,
-                    ]}>
-                    {region}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            )
+            return renderItem(region, index)
           })}
         </View>
         <BasicButton
@@ -103,7 +108,7 @@ const RegionModal = (props: Props) => {
 }
 
 const styles = StyleSheet.create({
-  fullScreen: {justifyContent: 'center', alignItems: 'center'},
+  fullScreen: {justifyContent: "center", alignItems: "center"},
   modalView: {
     backgroundColor: SyeongColors.gray_1,
     width: 318,
@@ -111,9 +116,9 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 11,
   },
   map_icon_main3: {
@@ -123,12 +128,12 @@ const styles = StyleSheet.create({
   },
   title: {
     color: SyeongColors.gray_8,
-    fontWeight: '600',
+    fontWeight: "600",
     fontSize: 16,
     lineHeight: 19.09,
     letterSpacing: -0.41,
   },
-  rowAlignCenter: {flexDirection: 'row', alignItems: 'center'},
+  rowAlignCenter: {flexDirection: "row", alignItems: "center"},
   restart_icon: {
     width: 18,
     height: 18,
@@ -139,11 +144,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 16.71,
     letterSpacing: -0.41,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   regionButtonsArea: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     marginBottom: 14,
   },
   regionButton: {
@@ -155,17 +160,17 @@ const styles = StyleSheet.create({
     marginRight: 6,
     marginVertical: 4,
     paddingHorizontal: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#8B95A199',
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#8B95A199",
     shadowOffset: {
       width: 0,
-      height: 8,
+      height: 6,
     },
-    shadowOpacity: 0.46,
-    shadowRadius: 11.14,
+    shadowOpacity: 0.57,
+    shadowRadius: 5,
 
-    elevation: 17,
+    elevation: 10,
   },
   selectedRegionButton: {
     backgroundColor: SyeongColors.main_4,
@@ -174,7 +179,7 @@ const styles = StyleSheet.create({
     color: SyeongColors.gray_6,
     fontSize: 14,
     lineHeight: 32,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   selectedRegionButtonText: {
     color: SyeongColors.gray_1,

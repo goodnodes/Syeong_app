@@ -6,10 +6,9 @@ import OtpInputs from "react-native-otp-inputs"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { timer_icon } from "../../../../assets/icons"
 import { POST_Validation_Check } from "../../../axios/auth"
-import BackButton from "../../../components/Button/BackButton"
 import BasicButton from "../../../components/Button/BasicButton"
 import { SyeongColors } from "../../../components/Colors"
-import Header from "../../../components/Header/Header"
+import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
 import SingleModal from "../../../components/Modal/SingleModal"
 import Title from "../../../components/Typography/Title"
 
@@ -31,16 +30,18 @@ const ValidateNumberScreen = ({navigation, route}) => {
         requestId,
         requestTime,
       )
+      console.log(data)
       if (data.msg === "verified") {
         navigation.navigate("PasswordSettingScreen", {
           signUpData: {
             pnum,
             requestId,
-            verifycode: data.data.verifycode,
+            verifycode: data.verifycode,
           },
         })
       }
     } catch (err: any) {
+    
       if (err.response.data.msg === "time over") {
         setIsModalVisible(true)
       } else if (err.response.data.msg === "unverified") {
@@ -58,9 +59,10 @@ const ValidateNumberScreen = ({navigation, route}) => {
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <StatusBar barStyle={"dark-content"} />
-      <Header backgroundColor={SyeongColors.gray_1}>
-        <BackButton />
-      </Header>
+      <HaederWithTitle
+        backgroundColor={SyeongColors.gray_1}
+        title={"회원가입"}
+      />
       <View style={styles.container}>
         <Title text="인증번호 입력" margin={[0, 0, 24, 0]} />
         <View>
@@ -99,6 +101,7 @@ const ValidateNumberScreen = ({navigation, route}) => {
           backgroundColor={SyeongColors.sub_2}
           textColor={SyeongColors.gray_8}
           disabled={validateNum.length !== 4} //validation needed
+          disableTextColor={SyeongColors.sub_OFF_1}
           onPress={onPressButton}
         />
         <View style={{flexDirection: "row", justifyContent: "space-between"}}>

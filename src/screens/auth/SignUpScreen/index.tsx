@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 import {
   Alert,
   SafeAreaView,
@@ -7,17 +7,23 @@ import {
   Text,
   View,
 } from "react-native"
-import {POST_Pnum_Request} from "../../../axios/auth"
-import BackButton from "../../../components/Button/BackButton"
+import {POST_Pnum_Request_SignUp} from "../../../axios/auth"
 import BasicButton from "../../../components/Button/BasicButton"
 import {SyeongColors} from "../../../components/Colors"
-import Header from "../../../components/Header/Header"
+import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
 import BasicTextInput from "../../../components/TextInput/BasicTextInput"
 import Title from "../../../components/Typography/Title"
 
 const SignUpScreen = ({navigation}) => {
+  const pnumPattern = /^[(]?[0-9]{3}[)]?[-][0-9]{4}?[-][0-9]{4}$/
+
   const [pnum, setPnum] = useState<string>("")
+  const [isPnum, setIsPnum] = useState<boolean>(false)
   const [isInValid, setIsInValid] = useState<boolean>(false)
+
+  useEffect(() => {
+    setIsPnum(pnumPattern.test(pnum))
+  }, [pnum])
 
   const onPressButton = () => {
     requestMessageAuthenticate()
@@ -25,11 +31,10 @@ const SignUpScreen = ({navigation}) => {
 
   const requestMessageAuthenticate = async () => {
     try {
-      const data = await POST_Pnum_Request(pnum)
-      console.log(data)
+      const data = await POST_Pnum_Request_SignUp(pnum.replace(/-/g, ""))
       navigation.navigate("ValidateNumberScreen", {
         signUpData: {
-          pnum,
+          pnum: pnum.replace(/-/g, ""),
           requestId: data.requestId,
           requestTime: data.requestTime,
         },
@@ -47,14 +52,31 @@ const SignUpScreen = ({navigation}) => {
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <StatusBar barStyle={"dark-content"} />
-      <Header backgroundColor={SyeongColors.gray_1}>
-        <BackButton />
-      </Header>
+      <HaederWithTitle
+        backgroundColor={SyeongColors.gray_1}
+        title={"회원가입"}
+      />
       <View style={styles.container}>
         <Title text="휴대폰 번호 입력" margin={[0, 0, 24, 0]} />
         <BasicTextInput
           value={pnum}
+          maxLength={13}
+          placeholder={"010-1234-5678"}
           onChangeText={text => {
+            if (
+              (text.length === 4 || text.length === 9) &&
+              text.length > pnum.length
+            ) {
+              setPnum(text.slice(0, -1) + "-" + text.slice(-1))
+              return
+            }
+            if (
+              (text.length === 4 || text.length === 9) &&
+              text.slice(-1) === "-"
+            ) {
+              setPnum(text.slice(0, -1))
+              return
+            }
             setPnum(text)
           }}
           keyboardType={"number-pad"}
@@ -73,7 +95,8 @@ const SignUpScreen = ({navigation}) => {
           margin={[36, 0, 0, 0]}
           backgroundColor={SyeongColors.sub_2}
           textColor={SyeongColors.gray_8}
-          disabled={pnum.length !== 11} //validation needed
+          disabled={!isPnum} //validation needed
+          disableTextColor={SyeongColors.sub_OFF_1}
           onPress={onPressButton}
         />
       </View>

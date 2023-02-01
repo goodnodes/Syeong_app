@@ -1,9 +1,10 @@
-import React, {useState} from "react"
+import {debounce} from "lodash"
+import React, {useEffect, useRef, useState} from "react"
 import {
   FlatList,
+  Keyboard,
   ListRenderItem,
   SafeAreaView,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -14,25 +15,81 @@ import {
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 import {useRecoilValue} from "recoil"
 import {
+  arrow_line_up_icon,
   map_icon_main3,
   search_icon_gray4,
   search_icon_gray8,
 } from "../../../../assets/icons"
-import {poolAtom} from "../../../atoms/pool"
+import {pool, PoolType} from "../../../atoms/pool"
 import {SyeongColors} from "../../../components/Colors"
 import Image from "../../../components/Image/Image"
-import PoolListItem, {PoolData} from "../../../components/ListItem/PoolListItem"
+import PoolListItem from "../../../components/ListItem/PoolListItem"
 import RegionModal from "./RegionModal"
 
-const SearchMainScreen = () => {
+const SearchMainScreen = ({navigation}) => {
   const insets = useSafeAreaInsets()
 
-  const poolData = useRecoilValue(poolAtom)
+  const poolData = useRecoilValue(pool)
   const [searchText, setSearchText] = useState<string>("")
+  const [searchRecommends, setSearchRecoomends] = useState<PoolType[]>([])
+  const [isRecommendsVisible, setIsRecommendsVisible] = useState<boolean>(false)
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
   const [selectedRegion, setSelectedRegion] = useState<string[]>([])
-  const [poolList, setPoolList] = useState<PoolData[]>(poolData)
-  const renderFlatListItem: ListRenderItem<PoolData> = ({item}) => {
+  const [poolList, setPoolList] = useState<PoolType[]>(poolData)
+
+  const keywordRef = useRef<string>("")
+  const flatListRef = useRef<FlatList>()
+
+  useEffect(() => {
+    getFilteredPoolData()
+  }, [selectedRegion])
+
+  useEffect(() => {
+    if (!searchText.length) {
+      setSearchRecoomends([])
+      setIsRecommendsVisible(false)
+      return
+    }
+    const filtered = poolData.filter(
+      el => el.address.includes(searchText) || el.name.includes(searchText),
+    )
+    if (!filtered.length) {
+      setSearchRecoomends([])
+      setIsRecommendsVisible(false)
+      return
+    }
+    setSearchRecoomends(filtered)
+    setIsRecommendsVisible(true)
+  }, [searchText])
+
+  const getFilteredPoolData = () => {
+    if (!selectedRegion.length) {
+      setPoolList(
+        poolData.filter(el => {
+          return (
+            el.address.includes(keywordRef.current) ||
+            el.name.includes(keywordRef.current)
+          )
+        }),
+      )
+      return
+    }
+    setPoolList(
+      poolData.filter(el => {
+        return (
+          selectedRegion.includes(el.region) &&
+          (el.address.includes(keywordRef.current) ||
+            el.name.includes(keywordRef.current))
+        )
+      }),
+    )
+  }
+
+  const debounceSearch = debounce(() => {
+    getFilteredPoolData()
+  }, 2500)
+
+  const renderFlatListItem: ListRenderItem<PoolType> = ({item}) => {
     return <PoolListItem data={item} />
   }
   const renderRegionSelectButtonText = () => {
@@ -44,77 +101,64 @@ const SearchMainScreen = () => {
       return `${selectedRegion[0]} +${selectedRegion.length - 1}`
     }
   }
-  return (
-    <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
-      {searchText.length > 0 && (
+
+  const renderRecommendsItem: ListRenderItem<PoolType> = ({
+    item,
+  }: {
+    item: PoolType
+  }) => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("SearchDetailScreen", {
+            item: item,
+          })
+        }}>
         <View
           style={{
-            position: "absolute",
-            top: insets.top + 60,
-            left: 0,
-            zIndex: 100,
-            width: "100%",
-            paddingHorizontal: 16,
+            flexDirection: "row",
+            marginVertical: 6,
+            alignItems: "center",
           }}>
-          <View
+          <Image
+            source={search_icon_gray4}
+            style={{width: 24, height: 24, marginRight: 16}}
+          />
+          <Text
             style={{
-              paddingHorizontal: 16,
-              paddingVertical: 10,
-              backgroundColor: SyeongColors.gray_1,
-              height: 300,
-              borderRadius: 10,
-
-              shadowColor: "#8B95A199",
-              shadowOffset: {
-                width: 0,
-                height: 8,
-              },
-              shadowOpacity: 0.46,
-              shadowRadius: 11.14,
-
-              elevation: 17,
+              color: SyeongColors.gray_6,
+              fontSize: 16,
+              fontWeight: "400",
+              lineHeight: 19.09,
+              letterSpacing: -0.41,
             }}>
-            <FlatList
-              data={["문정교육회관", "문정교육회관"]}
-              renderItem={({item}) => {
-                return (
-                  <TouchableOpacity>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        marginVertical: 6,
-                        alignItems: "center",
-                      }}>
-                      <Image
-                        source={search_icon_gray4}
-                        style={{width: 24, height: 24, marginRight: 16}}
-                      />
-                      <Text
-                        style={{
-                          color: SyeongColors.gray_6,
-                          fontSize: 16,
-                          fontWeight: "400",
-                          lineHeight: 19.09,
-                          letterSpacing: -0.41,
-                        }}>
-                        {item}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                )
-              }}
-            />
-          </View>
+            {item.name}
+          </Text>
         </View>
-      )}
+      </TouchableOpacity>
+    )
+  }
 
+  const renderRecommends = () => {
+    return (
+      <View style={[styles.recommendsView, {top: insets.top + 65}]}>
+        <View style={styles.recommendsContainer}>
+          <FlatList data={searchRecommends} renderItem={renderRecommendsItem} />
+        </View>
+      </View>
+    )
+  }
+
+  const renderSearchBar = () => {
+    return (
       <View style={styles.searchContainer}>
         <Image source={search_icon_gray8} style={styles.search_icon_gray8} />
         <TextInput
           value={searchText}
           onChangeText={text => {
             setSearchText(text)
+            keywordRef.current = text
+            return debounceSearch()
           }}
           style={styles.searchTextInput}
           placeholder="수영장 이름, 특정 지역 검색"
@@ -122,11 +166,27 @@ const SearchMainScreen = () => {
           autoComplete="off"
           autoCorrect={false}
           autoCapitalize="none"
+          onSubmitEditing={() => {
+            getFilteredPoolData()
+            setIsRecommendsVisible(false)
+          }}
         />
       </View>
+    )
+  }
+
+  return (
+    <SafeAreaView style={styles.safeAreaView}>
+      <StatusBar barStyle={"dark-content"} />
+      {isRecommendsVisible && renderRecommends()}
+      {renderSearchBar()}
       <View style={styles.listArea}>
         <View style={styles.listHeader}>
-          <Text style={styles.listHeaderTitle}>모든 수영장</Text>
+          <Text style={styles.listHeaderTitle}>
+            {poolList.length === poolData.length
+              ? "모든 수영장"
+              : `검색 결과 ${poolList.length}`}
+          </Text>
           <TouchableOpacity
             onPress={() => {
               setIsModalVisible(true)
@@ -138,10 +198,47 @@ const SearchMainScreen = () => {
           </TouchableOpacity>
         </View>
         <FlatList
+          onMomentumScrollBegin={() => {
+            if (!isRecommendsVisible) return
+            setIsRecommendsVisible(false)
+            Keyboard.dismiss()
+          }}
+          ref={flatListRef}
           data={poolList}
           renderItem={renderFlatListItem}
-          contentContainerStyle={{paddingHorizontal: 20}}
+          contentContainerStyle={{paddingHorizontal: 20, paddingBottom: 30}}
         />
+        <TouchableOpacity
+          onPress={() => {
+            flatListRef.current?.scrollToIndex({index: 0, animated: true})
+          }}>
+          <View
+            style={{
+              backgroundColor: SyeongColors.gray_2,
+              width: 60,
+              height: 60,
+              borderRadius: 999,
+              position: "absolute",
+              right: 20,
+              bottom: 50,
+              justifyContent: "center",
+              alignItems: "center",
+              shadowColor: "#8B95A199",
+              shadowOffset: {
+                width: 0,
+                height: 6,
+              },
+              shadowOpacity: 0.57,
+              shadowRadius: 5,
+
+              elevation: 10,
+            }}>
+            <Image
+              source={arrow_line_up_icon}
+              style={{width: 28, height: 28}}
+            />
+          </View>
+        </TouchableOpacity>
       </View>
       <RegionModal
         isVisible={isModalVisible}
@@ -159,7 +256,7 @@ const styles = StyleSheet.create({
     backgroundColor: SyeongColors.gray_1,
   },
   searchContainer: {
-    marginTop: 7,
+    marginTop: 12,
     marginHorizontal: 20,
     height: 43,
     flexDirection: "row",
@@ -181,6 +278,8 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     lineHeight: 19.09,
     letterSpacing: -0.41,
+    flexShrink: 1,
+    width: "100%",
   },
   listArea: {flex: 1},
   listHeader: {
@@ -210,17 +309,41 @@ const styles = StyleSheet.create({
     shadowColor: "#8B95A199",
     shadowOffset: {
       width: 0,
-      height: 8,
+      height: 6,
     },
-    shadowOpacity: 0.46,
-    shadowRadius: 11.14,
+    shadowOpacity: 0.57,
+    shadowRadius: 5,
 
-    elevation: 17,
+    elevation: 10,
   },
   map_icon_main3: {
     width: 18,
     height: 18,
     marginRight: 4,
+  },
+  recommendsView: {
+    position: "absolute",
+    left: 0,
+    zIndex: 100,
+    width: "100%",
+    paddingHorizontal: 20,
+  },
+  recommendsContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: SyeongColors.gray_1,
+    maxHeight: 300,
+    borderRadius: 10,
+
+    shadowColor: "#8B95A199",
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.57,
+    shadowRadius: 5,
+
+    elevation: 10,
   },
 })
 

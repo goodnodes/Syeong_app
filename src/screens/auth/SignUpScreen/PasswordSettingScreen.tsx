@@ -1,11 +1,10 @@
 import {View, Text, StyleSheet, SafeAreaView, StatusBar} from "react-native"
 import React, {useState} from "react"
 import {SyeongColors} from "../../../components/Colors"
-import Header from "../../../components/Header/Header"
-import BackButton from "../../../components/Button/BackButton"
 import Title from "../../../components/Typography/Title"
 import BasicTextInput from "../../../components/TextInput/BasicTextInput"
 import BasicButton from "../../../components/Button/BasicButton"
+import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
 
 const PasswordSettingScreen = ({navigation, route}) => {
   const [password, setPassword] = useState<string>("")
@@ -23,9 +22,10 @@ const PasswordSettingScreen = ({navigation, route}) => {
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <StatusBar barStyle={"dark-content"} />
-      <Header backgroundColor={SyeongColors.gray_1}>
-        <BackButton />
-      </Header>
+      <HaederWithTitle
+        backgroundColor={SyeongColors.gray_1}
+        title={"회원가입"}
+      />
       <View style={styles.container}>
         <Title text="비밀번호 설정" margin={[0, 0, 24, 0]} />
         <BasicTextInput
@@ -56,6 +56,7 @@ const PasswordSettingScreen = ({navigation, route}) => {
             passwordConfirm.length < 6 ||
             password !== passwordConfirm
           } //validation needed
+          disableTextColor={SyeongColors.sub_OFF_1}
           onPress={onPressButton}
         />
       </View>

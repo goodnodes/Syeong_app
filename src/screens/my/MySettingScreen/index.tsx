@@ -6,21 +6,35 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Linking,
 } from "react-native"
 import {SafeAreaView} from "react-native-safe-area-context"
+import { useRecoilValue } from "recoil"
 import {chevron_right, traffic_cone_icon} from "../../../../assets/icons"
+import { user } from "../../../atoms/auth"
 import BackButton from "../../../components/Button/BackButton"
 import {SyeongColors} from "../../../components/Colors"
 import Header from "../../../components/Header/Header"
 import DoubleModal from "../../../components/Modal/DoubleModal"
+import {useSignOut} from "../../../hooks/useAuth"
 
 const MySettingScreen = ({navigation}) => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
-  const signOut = () => {}
+  const userAtom = useRecoilValue(user)
+  const signOut = async () => {
+    try {
+      await useSignOut()
+      setIsModalVisible(false)
+    } catch (err) {
+      console.log(err)
+    }
+  }
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <Header backgroundColor={SyeongColors.gray_1}>
-        <BackButton />
+        <View style={{alignItems: "flex-start"}}>
+          <BackButton />
+        </View>
       </Header>
       <ScrollView style={styles.scrollView}>
         <View style={styles.component}>
@@ -28,7 +42,7 @@ const MySettingScreen = ({navigation}) => {
           <TouchableOpacity>
             <View style={styles.button}>
               <Text style={styles.buttonText}>휴대폰</Text>
-              <Text style={styles.buttonSubText}>010-2345-3455</Text>
+              <Text style={styles.buttonSubText}>{userAtom.privateinfo.pnum}</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -46,13 +60,23 @@ const MySettingScreen = ({navigation}) => {
         </View>
         <View style={styles.component}>
           <Text style={styles.componentTitle}>약관 및 정책</Text>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              Linking.openURL(
+                "https://nonstop-plum-392.notion.site/c6fcf05c5da943a2a560afd62e981b5d",
+              )
+            }}>
             <View style={[styles.button, {marginBottom: 8}]}>
               <Text style={styles.buttonText}>이용약관</Text>
               <Image source={chevron_right} style={styles.chevron_right} />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              Linking.openURL(
+                "https://nonstop-plum-392.notion.site/303435ac1ab74b9699550e11f4cf770b",
+              )
+            }}>
             <View style={styles.button}>
               <Text style={styles.buttonText}>개인정보 처리방침</Text>
               <Image source={chevron_right} style={styles.chevron_right} />
@@ -69,7 +93,10 @@ const MySettingScreen = ({navigation}) => {
               <Text style={styles.buttonText}>로그아웃</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("EditPasswordValidateScreen")
+            }}>
             <View style={[styles.button, {marginBottom: 8}]}>
               <Text style={styles.buttonText}>비밀번호 변경하기</Text>
             </View>

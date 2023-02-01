@@ -1,15 +1,20 @@
-import React, { useState } from "react"
+import CookieManager from "@react-native-cookies/cookies"
+import React, {useState} from "react"
 import {
-  Alert, SafeAreaView,
-  StatusBar, StyleSheet, Text, View
+  Alert,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native"
-import { useSetRecoilState } from "recoil"
-import { authAtom } from "../../../atoms/auth"
-import { POST_Signup } from "../../../axios/auth"
-import BackButton from "../../../components/Button/BackButton"
+import Config from "react-native-config"
+import {useSetRecoilState} from "recoil"
+import {authAtom} from "../../../atoms/auth"
+import {POST_Signup} from "../../../axios/auth"
 import BasicButton from "../../../components/Button/BasicButton"
-import { SyeongColors } from "../../../components/Colors"
-import Header from "../../../components/Header/Header"
+import {SyeongColors} from "../../../components/Colors"
+import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
 import BasicTextInput from "../../../components/TextInput/BasicTextInput"
 import Title from "../../../components/Typography/Title"
 
@@ -26,7 +31,17 @@ const NicknameSettingScreen = ({navigation, route}) => {
   }
   const requestSignUp = async () => {
     try {
-      const data = await POST_Signup(pnum, password, nickname, verifycode, requestId) 
+      const data = await POST_Signup(
+        pnum,
+        password,
+        nickname,
+        verifycode,
+        requestId,
+      )
+      const result = await CookieManager.setFromResponse(
+        Config.SERVER_URL,
+        data.headers["set-cookie"]?.[0].split("Domain=localhost; ").join(""),
+      )
       setAuthAtom(true)
     } catch (err: any) {
       if (err.response.data.msg === "already exist") {
@@ -39,9 +54,10 @@ const NicknameSettingScreen = ({navigation, route}) => {
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <StatusBar barStyle={"dark-content"} />
-      <Header backgroundColor={SyeongColors.gray_1}>
-        <BackButton />
-      </Header>
+      <HaederWithTitle
+        backgroundColor={SyeongColors.gray_1}
+        title={"회원가입"}
+      />
       <View style={styles.container}>
         <Title text="닉네임 설정" margin={[0, 0, 24, 0]} />
         <BasicTextInput
@@ -64,6 +80,7 @@ const NicknameSettingScreen = ({navigation, route}) => {
           backgroundColor={SyeongColors.sub_2}
           textColor={SyeongColors.gray_8}
           disabled={!nickname} //validation needed
+          disableTextColor={SyeongColors.sub_OFF_1}
           onPress={onPressButton}
         />
       </View>

@@ -1,11 +1,11 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
-import React from 'react'
-import {Image, Text} from 'react-native'
-import {home_icon, note_icon, search_icon_white} from '../../../../assets/icons'
-import {SyeongColors} from '../../../components/Colors'
-import HomeMainScreen from '../../home/HomeMainScreen'
-import RecordMainScreen from '../../record/RecordMainScreen'
-import SearchMainScreen from '../../search/SearchMainScreen'
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs"
+import React from "react"
+import {Image, Text} from "react-native"
+import {home_icon, note_icon, search_icon_white} from "../../../../assets/icons"
+import {SyeongColors} from "../../../components/Colors"
+import HomeMainScreen from "../../home/HomeMainScreen"
+import RecordMainScreen from "../../record/RecordMainScreen"
+import SearchMainScreen from "../../search/SearchMainScreen"
 
 const Tab = createBottomTabNavigator()
 
@@ -15,9 +15,10 @@ const MainTabScreen = () => {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
-          height: 90,
-          paddingTop: 7,paddingBottom: 34
+          backgroundColor: "#FFFFFF",
+          height: 85,
+          paddingTop: 11,
+          paddingBottom: 31,
         },
       }}>
       <Tab.Screen
@@ -30,7 +31,7 @@ const MainTabScreen = () => {
                 style={[
                   {
                     fontSize: 12,
-                    fontWeight: '500',
+                    fontWeight: "500",
                     lineHeight: 14.32,
                     letterSpacing: -0.41,
                   },
@@ -67,7 +68,7 @@ const MainTabScreen = () => {
                 style={[
                   {
                     fontSize: 12,
-                    fontWeight: '500',
+                    fontWeight: "500",
                     lineHeight: 14.32,
                     letterSpacing: -0.41,
                   },
@@ -104,7 +105,7 @@ const MainTabScreen = () => {
                 style={[
                   {
                     fontSize: 12,
-                    fontWeight: '500',
+                    fontWeight: "500",
                     lineHeight: 14.32,
                     letterSpacing: -0.41,
                   },

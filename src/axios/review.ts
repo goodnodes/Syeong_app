@@ -3,7 +3,7 @@ import { KeywordType } from "../../assets/static/keyword"
 import { ReviewType } from "../screens/search/SearchDetailScreen"
 
 const GET_ReviewByPool = async (poolId: string) => {
-  const {data} = await AxiosInstance.get("/review/pool", {
+  const {data} = await AxiosInstance.get("/pool/review", {
     params: {
       poolid: poolId,
     },

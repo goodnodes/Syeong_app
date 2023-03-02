@@ -1,12 +1,10 @@
-import React, { useState } from "react"
-import {
-  Alert, SafeAreaView,
-  StatusBar, StyleSheet, View
-} from "react-native"
-import { POST_EditPassword } from "../../../axios/auth"
+import React, {useState} from "react"
+import {Alert, SafeAreaView, StatusBar, StyleSheet, View} from "react-native"
+import {POST_EditPassword} from "../../../axios/auth"
 import BasicButton from "../../../components/Button/BasicButton"
-import { SyeongColors } from "../../../components/Colors"
+import {SyeongColors} from "../../../components/Colors"
 import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
 import BasicTextInput from "../../../components/TextInput/BasicTextInput"
 import Title from "../../../components/Typography/Title"
 
@@ -36,7 +34,7 @@ const EditPasswordScreen = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
+      <SyeongStatusBar />
       <HaederWithTitle
         backgroundColor={SyeongColors.gray_1}
         title={"비밀번호 변경"}
@@ -67,8 +65,7 @@ const EditPasswordScreen = ({navigation, route}) => {
           backgroundColor={SyeongColors.sub_2}
           textColor={SyeongColors.gray_8}
           disabled={
-            newPassword.length < 6 ||
-            newPassword !== newPasswordConfirm
+            newPassword.length < 6 || newPassword !== newPasswordConfirm
           } //validation needed
           disableTextColor={SyeongColors.sub_OFF_1}
           onPress={onPressButton}

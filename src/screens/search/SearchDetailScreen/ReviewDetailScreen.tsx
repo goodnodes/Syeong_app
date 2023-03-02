@@ -1,27 +1,33 @@
+import React, {useState} from "react"
 import {
-  View,
-  Text,
-  SafeAreaView,
-  StyleSheet,
-  StatusBar,
-  TouchableOpacity,
   FlatList,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native"
-import React from "react"
-import ReviewBadgeComponent from "./ReviewBadgeComponent"
-import Image from "../../../components/Image/Image"
-import ReviewItem from "./ReviewItem"
-import {pencil_icon} from "../../../../assets/icons"
-import BackButton from "../../../components/Button/BackButton"
+import {useRecoilValue} from "recoil"
+import {pencil_icon, pencil_icon_sub3} from "../../../../assets/icons"
+import {user} from "../../../atoms/auth"
 import {SyeongColors} from "../../../components/Colors"
-import Header from "../../../components/Header/Header"
 import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
+import Image from "../../../components/Image/Image"
+import DoubleModal from "../../../components/Modal/DoubleModal"
+import ReviewBadgeComponent from "./ReviewBadgeComponent"
+import ReviewItem from "./ReviewItem"
 
 const ReviewDetailScreen = ({navigation, route}) => {
-  const {reviews,topTags, name} = route.params
+  const {reviews, topTags, name, _id} = route.params
+
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
+  const userAtom = useRecoilValue(user)
+
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
+      <SyeongStatusBar />
       <HaederWithTitle backgroundColor="#FFFFFF" title={name} />
       <View style={styles.reviewContainer}>
         <View style={styles.reviewTitleRow}>
@@ -31,9 +37,13 @@ const ReviewDetailScreen = ({navigation, route}) => {
           </View>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("WriteReviewScreen", {
-                data: {title: name},
-              })
+              if (reviews.filter(el => el.userid === userAtom._id).length) {
+                setIsModalVisible(true)
+              } else {
+                navigation.navigate("WriteReviewScreen", {
+                  data: {name: name, _id: _id},
+                })
+              }
             }}>
             <View style={styles.rowAlignCenter}>
               <Image source={pencil_icon} style={styles.pencil_icon} />
@@ -80,6 +90,27 @@ const ReviewDetailScreen = ({navigation, route}) => {
             ))}
           </View>
         }
+      />
+      <DoubleModal
+        isVisible={isModalVisible}
+        setIsVisible={setIsModalVisible}
+        image={pencil_icon_sub3}
+        mainText={"작성한 리뷰를 수정할까요?"}
+        subText={"이미 작성한 리뷰가 있어요\n리뷰를 수정할까요?"}
+        leftButtonText="아니요"
+        onPressLeftButton={() => {
+          setIsModalVisible(false)
+        }}
+        rightButtonText="수정하기"
+        onPressRightButton={() => {
+          navigation.navigate("EditMyReviewScreen", {
+            data: {
+              item: reviews.filter(el => el.userid === userAtom._id)[0],
+              name: name,
+            },
+          })
+          setIsModalVisible(false)
+        }}
       />
     </SafeAreaView>
   )

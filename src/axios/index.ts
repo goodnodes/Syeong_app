@@ -1,6 +1,6 @@
 import axios from "axios"
-import Config from "react-native-config"
+import { SERVER_URL } from "../../config"
 
 export const AxiosInstance = axios.create({
-  baseURL: Config.SERVER_URL,
+  baseURL: SERVER_URL,
 })

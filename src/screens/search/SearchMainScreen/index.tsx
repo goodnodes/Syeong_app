@@ -17,11 +17,13 @@ import {useRecoilValue} from "recoil"
 import {
   arrow_line_up_icon,
   map_icon_main3,
+  search_icon_big,
   search_icon_gray4,
   search_icon_gray8,
 } from "../../../../assets/icons"
 import {pool, PoolType} from "../../../atoms/pool"
 import {SyeongColors} from "../../../components/Colors"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
 import Image from "../../../components/Image/Image"
 import PoolListItem from "../../../components/ListItem/PoolListItem"
 import RegionModal from "./RegionModal"
@@ -87,7 +89,7 @@ const SearchMainScreen = ({navigation}) => {
 
   const debounceSearch = debounce(() => {
     getFilteredPoolData()
-  }, 2500)
+  }, 1000)
 
   const renderFlatListItem: ListRenderItem<PoolType> = ({item}) => {
     return <PoolListItem data={item} />
@@ -149,6 +151,40 @@ const SearchMainScreen = ({navigation}) => {
     )
   }
 
+  const renderFooter = () => {
+    if (poolList.length) return null
+    return (
+      <View style={{marginTop: 100, alignItems: "center"}}>
+        <Image
+          source={search_icon_big}
+          style={{width: 80, height: 80, marginBottom: 36}}
+        />
+        <Text
+          style={{
+            color: SyeongColors.gray_8,
+            fontSize: 18,
+            fontWeight: "600",
+            lineHeight: 21.48,
+            letterSpacing: -0.41,
+            marginBottom: 12,
+          }}>
+          검색 결과가 없어요
+        </Text>
+        <Text
+          style={{
+            fontWeight: "500",
+            fontSize: 16,
+            lineHeight: 22.4,
+            letterSpacing: -0.41,
+            color: SyeongColors.gray_4,
+            textAlign: "center",
+          }}>
+          검색어와 일치하는 정보가 나타나지 않았어요{"\n"}다시 확인해 주세요
+        </Text>
+      </View>
+    )
+  }
+
   const renderSearchBar = () => {
     return (
       <View style={styles.searchContainer}>
@@ -177,7 +213,7 @@ const SearchMainScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
+      <SyeongStatusBar />
       {isRecommendsVisible && renderRecommends()}
       {renderSearchBar()}
       <View style={styles.listArea}>
@@ -207,38 +243,41 @@ const SearchMainScreen = ({navigation}) => {
           data={poolList}
           renderItem={renderFlatListItem}
           contentContainerStyle={{paddingHorizontal: 20, paddingBottom: 30}}
+          ListFooterComponent={renderFooter()}
         />
-        <TouchableOpacity
-          onPress={() => {
-            flatListRef.current?.scrollToIndex({index: 0, animated: true})
-          }}>
-          <View
-            style={{
-              backgroundColor: SyeongColors.gray_2,
-              width: 60,
-              height: 60,
-              borderRadius: 999,
-              position: "absolute",
-              right: 20,
-              bottom: 50,
-              justifyContent: "center",
-              alignItems: "center",
-              shadowColor: "#8B95A199",
-              shadowOffset: {
-                width: 0,
-                height: 6,
-              },
-              shadowOpacity: 0.57,
-              shadowRadius: 5,
-
-              elevation: 10,
+        {poolList.length > 0 && (
+          <TouchableOpacity
+            onPress={() => {
+              flatListRef.current?.scrollToIndex({index: 0, animated: true})
             }}>
-            <Image
-              source={arrow_line_up_icon}
-              style={{width: 28, height: 28}}
-            />
-          </View>
-        </TouchableOpacity>
+            <View
+              style={{
+                backgroundColor: SyeongColors.gray_2,
+                width: 60,
+                height: 60,
+                borderRadius: 999,
+                position: "absolute",
+                right: 20,
+                bottom: 20,
+                justifyContent: "center",
+                alignItems: "center",
+                shadowColor: "#8B95A199",
+                shadowOffset: {
+                  width: 0,
+                  height: 6,
+                },
+                shadowOpacity: 0.57,
+                shadowRadius: 5,
+
+                elevation: 10,
+              }}>
+              <Image
+                source={arrow_line_up_icon}
+                style={{width: 28, height: 28}}
+              />
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
       <RegionModal
         isVisible={isModalVisible}
@@ -306,15 +345,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: SyeongColors.gray_2,
     borderRadius: 8,
-    shadowColor: "#8B95A199",
+    shadowColor: "#8B95A166",
     shadowOffset: {
-      width: 0,
-      height: 6,
+      width: 2,
+      height: 2,
     },
-    shadowOpacity: 0.57,
-    shadowRadius: 5,
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
 
-    elevation: 10,
+    elevation: 8,
   },
   map_icon_main3: {
     width: 18,

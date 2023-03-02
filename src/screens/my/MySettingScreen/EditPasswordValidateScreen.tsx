@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react"
+import React, {useEffect, useState} from "react"
 import {
   Alert,
   SafeAreaView,
   StatusBar,
   StyleSheet,
   Text,
-  View
+  View,
 } from "react-native"
-import { POST_Pnum_Request_EditPassword } from "../../../axios/auth"
+import {POST_Pnum_Request_EditPassword} from "../../../axios/auth"
 import BasicButton from "../../../components/Button/BasicButton"
-import { SyeongColors } from "../../../components/Colors"
+import {SyeongColors} from "../../../components/Colors"
 import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
 import BasicTextInput from "../../../components/TextInput/BasicTextInput"
 import Title from "../../../components/Typography/Title"
 
@@ -51,7 +52,7 @@ const EditPasswordValidateScreen = ({navigation}) => {
   }
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
+      <SyeongStatusBar />
       <HaederWithTitle
         backgroundColor={SyeongColors.gray_1}
         title={"비밀번호 변경"}

@@ -12,11 +12,13 @@ type BasicButtonProps = {
   height?: number
   textSize?: number
   margin?: number[]
+  padding?: number[]
   disabled?: boolean
   borderRadius?: number
   borderWidth?: number
   onPress: () => void
   disableTextColor?:string
+  flexShrink?:boolean
 }
 
 const BasicButton = (props: BasicButtonProps) => {
@@ -30,11 +32,13 @@ const BasicButton = (props: BasicButtonProps) => {
     height,
     textSize,
     margin,
+    padding,
     disabled,
     borderRadius,
     borderWidth,
     disableTextColor,
     onPress,
+    flexShrink
   } = props
   return (
     <TouchableOpacity
@@ -57,8 +61,17 @@ const BasicButton = (props: BasicButtonProps) => {
               marginLeft: margin[3],
             }
           : null,
+                  padding
+          ? {
+              paddingTop: padding[0],
+              paddingRight: padding[1],
+              paddingBottom: padding[2],
+              paddingLeft: padding[3],
+            }
+          : null,
         borderRadius ? {borderRadius: borderRadius} : null,
         borderWidth ? {borderWidth: borderWidth} : null,
+        flexShrink?{flexShrink: 1, width: undefined}:null
       ]}>
       <View>
         <Text

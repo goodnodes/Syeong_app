@@ -22,6 +22,7 @@ import BasicButton from "../../../components/Button/BasicButton"
 import {SyeongColors} from "../../../components/Colors"
 import Header from "../../../components/Header/Header"
 import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
 import Image from "../../../components/Image/Image"
 import DoubleModal from "../../../components/Modal/DoubleModal"
 
@@ -57,14 +58,17 @@ const EditMyReviewScreen = ({navigation, route}) => {
 
   const requestEditReview = async () => {
     try {
-      const result = await PATCH_EditReview(item._id, item,{
+      const result = await PATCH_EditReview(item._id, item, {
         textreview: reviewText,
         keywordreviews: reviewTags,
         poolid: item.poolid,
         userid: item.userid,
       })
-      console.log(result)
-      navigation.replace("CompleteScreen")
+      setTimeout(() => {
+        setIsModalVisible(false)
+
+        navigation.replace("CompleteScreen")
+      }, 300)
     } catch (err) {
       console.log(err)
       Alert.alert("리뷰 수정에 실패했습니다. 다시 시도해주세요!")
@@ -176,7 +180,7 @@ const EditMyReviewScreen = ({navigation, route}) => {
             letterSpacing: -0.41,
             marginBottom: 16,
           }}>
-          작성 리뷰
+          리뷰 작성하기
         </Text>
         <View
           style={{
@@ -229,7 +233,7 @@ const EditMyReviewScreen = ({navigation, route}) => {
       <DoubleModal
         image={pencil_icon_sub3}
         mainText="작성한 리뷰를 수정할까요?"
-        subText={`작성 완료한 수영장 키워드, 작성 리뷰를\n수영장 정보에 새롭게 등록해 드려요`}
+        subText={`수영장 리뷰를 등록합니다.`}
         isVisible={isModalVisible}
         setIsVisible={setIsModalVisible}
         leftButtonText={"아니요"}
@@ -264,7 +268,7 @@ const EditMyReviewScreen = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
+      <SyeongStatusBar />
       <HaederWithTitle
         title={name}
         backgroundColor={"#FFFFFF"}

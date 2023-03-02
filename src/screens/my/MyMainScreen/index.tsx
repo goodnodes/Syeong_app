@@ -14,7 +14,7 @@ import {
   View,
 } from "react-native"
 import PagerView from "react-native-pager-view"
-import {SafeAreaView} from "react-native-safe-area-context"
+import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context"
 import SelectDropdown from "react-native-select-dropdown"
 import {useRecoilValue} from "recoil"
 import {
@@ -35,6 +35,7 @@ import {DELETE_Review, GET_ReviewByUser} from "../../../axios/review"
 import BackButton from "../../../components/Button/BackButton"
 import {SyeongColors} from "../../../components/Colors"
 import Header from "../../../components/Header/Header"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
 import {useDateFormat} from "../../../hooks/useDate"
 import {useMyPoolAdd, useMyPoolDelete} from "../../../hooks/useMyPool"
 import {useUserAtomUpdate} from "../../../hooks/useUserAtom"
@@ -48,6 +49,8 @@ const MyMainScreen = ({navigation}) => {
   const [myReview, setMyReview] = useState<ReviewType[]>([])
   const userAtom = useRecoilValue(user)
   const poolAtom = useRecoilValue(pool)
+
+  const insets = useSafeAreaInsets()
 
   useFocusEffect(
     useCallback(() => {
@@ -215,7 +218,7 @@ const MyMainScreen = ({navigation}) => {
             letterSpacing: -0.41,
             textAlign: "center",
           }}>
-          수영장 정보를 검색하고{"\n"}수영장 리뷰를 작성할 수 있어요
+          방문해봤던 수영장 리뷰를 작성해보세요
         </Text>
       </View>
     )
@@ -350,6 +353,7 @@ const MyMainScreen = ({navigation}) => {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
+              marginBottom: 8
             }}>
             <Text
               style={{
@@ -358,7 +362,6 @@ const MyMainScreen = ({navigation}) => {
                 fontWeight: "600",
                 lineHeight: 19.09,
                 letterSpacing: -0.41,
-                marginBottom: 8,
               }}>
               {item.name}
             </Text>
@@ -387,7 +390,8 @@ const MyMainScreen = ({navigation}) => {
 
   const renderMyPoolPager = () => {
     return (
-      <ScrollView style={{paddingHorizontal: 20}}>
+      <ScrollView
+        contentContainerStyle={{paddingHorizontal: 20, paddingBottom: 30}}>
         <Text
           style={{
             textAlign: "right",
@@ -411,7 +415,7 @@ const MyMainScreen = ({navigation}) => {
               borderColor: SyeongColors.gray_2,
               borderWidth: 1.5,
               borderStyle: "dashed",
-              borderRadius: 10
+              borderRadius: 10,
             }}>
             <Image
               source={push_pin_simple_icon}
@@ -419,7 +423,7 @@ const MyMainScreen = ({navigation}) => {
             />
             <Text
               style={{
-                color: SyeongColors.gray_8,
+                color: SyeongColors.gray_5,
                 fontSize: 15,
                 fontWeight: "600",
                 lineHeight: 22,
@@ -441,7 +445,7 @@ const MyMainScreen = ({navigation}) => {
     return (
       <FlatList
         data={myReview}
-        contentContainerStyle={{paddingHorizontal: 20}}
+        contentContainerStyle={{paddingHorizontal: 20, paddingBottom: 30}}
         ListHeaderComponent={renderReviewHeader()}
         renderItem={renderReviewItem}
         ListFooterComponent={renderReviewFooter()}
@@ -450,25 +454,27 @@ const MyMainScreen = ({navigation}) => {
   }
 
   return (
-    <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
-      <Header backgroundColor="#FFFFFF">
-        <View style={{flexDirection: "row", justifyContent: "space-between"}}>
-          <BackButton />
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("MySettingScreen")
-            }}>
-            <Image source={gear_icon} style={styles.gear_icon} />
-          </TouchableOpacity>
-        </View>
-      </Header>
+    <View style={styles.safeAreaView}>
+      <SyeongStatusBar />
+      <View style={{marginTop: insets.top}}>
+        <Header backgroundColor="#FFFFFF">
+          <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+            <BackButton />
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("MySettingScreen")
+              }}>
+              <Image source={gear_icon} style={styles.gear_icon} />
+            </TouchableOpacity>
+          </View>
+        </Header>
+      </View>
       <View style={styles.profileView}>
         <Text style={styles.usernameText}>{userAtom.privateinfo.nickname}</Text>
         <View style={styles.profileRow}>
           {!userAtom.privateinfo.goal ? (
             <Text style={[styles.subText, {color: SyeongColors.gray_3}]}>
-              나만의 운동 목표를 정해 봐요!
+              나만의 수영 목표를 정해보세요!
             </Text>
           ) : (
             <Text style={styles.subText}>{userAtom.privateinfo.goal}</Text>
@@ -528,7 +534,7 @@ const MyMainScreen = ({navigation}) => {
         {renderMyPoolPager()}
         {renderReviewPager()}
       </PagerView>
-    </SafeAreaView>
+    </View>
   )
 }
 
@@ -590,7 +596,7 @@ const styles = StyleSheet.create({
   pagerButton: {
     width: 100,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
   },
   pagerBar: {
     width: 100,

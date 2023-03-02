@@ -6,6 +6,7 @@ import {
   Image,
   ImageBackground,
   ListRenderItem,
+  Platform,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -25,32 +26,33 @@ import {useSafeAreaInsets} from "react-native-safe-area-context"
 import SelectDropdown from "react-native-select-dropdown"
 import {useRecoilState, useRecoilValue} from "recoil"
 import {
-  arrow_line_up_icon,
   caret_down_icon,
   caret_up_linear_gradient,
   map_icon,
-  pin_icon_gray5,
   pin_icon_sub4,
   push_pin_simple_icon,
-  search_icon_gray8,
   search_icon_white,
   syeong_logo,
+  traffic_cone_icon,
   user_icon,
 } from "../../../../assets/icons"
-import {home_background} from "../../../../assets/images"
+import {landing_background} from "../../../../assets/images"
 import {regionData} from "../../../../assets/static/region"
-import {user} from "../../../atoms/auth"
+import {authAtom, user} from "../../../atoms/auth"
 import {pool, PoolType} from "../../../atoms/pool"
 import {SyeongColors} from "../../../components/Colors"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
 import PoolListItem from "../../../components/ListItem/PoolListItem"
+import DoubleModal from "../../../components/Modal/DoubleModal"
 import {useMyPoolAdd, useMyPoolDelete} from "../../../hooks/useMyPool"
 import {useUserAtomUpdate} from "../../../hooks/useUserAtom"
 
 const HomeMainScreen = ({navigation, route}) => {
-
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(authAtom)
   const [userAtom, setUserAtom] = useRecoilState(user)
   const [poolAtom, setPool] = useRecoilState(pool)
   const [iconState, setIconState] = useState<boolean>(false)
+  const [isLoginModalVisible, setIsLoginModalVisible] = useState<boolean>(false)
   const [selectedRegion, setSelectedRegion] = useState<string>(regionData[0])
   const [myPoolData, setMyPoolData] = useState<PoolType[]>([])
   const [displayPoolData, setDisplayPoolData] = useState<PoolType[]>(poolAtom)
@@ -58,11 +60,13 @@ const HomeMainScreen = ({navigation, route}) => {
 
   useFocusEffect(
     useCallback(() => {
+      if(!isLoggedIn) return
       useUserAtomUpdate()
     }, []),
   )
 
   useEffect(() => {
+    if (!isLoggedIn) return
     const poolData = poolAtom.filter(el => {
       return userAtom.mypools?.includes(el._id)
     })
@@ -77,13 +81,13 @@ const HomeMainScreen = ({navigation, route}) => {
   const insets = useSafeAreaInsets()
   const offset = useSharedValue(0)
 
-  const animatedStyles = useAnimatedStyle(() => {
-    const scale = interpolate(offset.value, [0, 560], [70, -70], {
-      extrapolateLeft: Extrapolation.CLAMP,
-      extrapolateRight: Extrapolation.CLAMP,
-    })
-    return {transform: [{translateY: scale}]}
-  })
+  // const animatedStyles = useAnimatedStyle(() => {
+  //   const scale = interpolate(offset.value, [0, 560], [70, -70], {
+  //     extrapolateLeft: Extrapolation.CLAMP,
+  //     extrapolateRight: Extrapolation.CLAMP,
+  //   })
+  //   return {transform: [{translateY: scale}]}
+  // })
 
   const scrollHandler = useAnimatedScrollHandler(event => {
     offset.value = event.contentOffset.y
@@ -93,6 +97,14 @@ const HomeMainScreen = ({navigation, route}) => {
 
   const animatedOpacity = useAnimatedStyle(() => {
     const opacity = interpolate(offset.value, [100, 250], [0, 1], {
+      extrapolateLeft: Extrapolation.CLAMP,
+      extrapolateRight: Extrapolation.CLAMP,
+    })
+    return {opacity}
+  })
+
+  const animatedOpacityReverse = useAnimatedStyle(() => {
+    const opacity = interpolate(offset.value, [0, 100], [1, 0], {
       extrapolateLeft: Extrapolation.CLAMP,
       extrapolateRight: Extrapolation.CLAMP,
     })
@@ -109,21 +121,7 @@ const HomeMainScreen = ({navigation, route}) => {
 
   const renderFirstItem = () => {
     return (
-      <View>
-        {/* <Animated.View
-          style={[
-            {
-              width: "100%",
-              height: 85,
-              backgroundColor: SyeongColors.gray_1,
-              borderTopLeftRadius: 15,
-              borderTopRightRadius: 15,
-              position: "absolute",
-              top: 70,
-            },
-            animatedStyles,
-          ]}
-        /> */}
+      <>
         <View style={styles.myPool}>
           <View style={styles.myPoolTitle}>
             <Text style={styles.myPoolText}>🏊‍♀️ 나의 고정 수영장</Text>
@@ -156,79 +154,84 @@ const HomeMainScreen = ({navigation, route}) => {
                       lineHeight: 22,
                       letterSpacing: -0.41,
                     }}>
-                    고정 수영장을 설정할 수 있어요!
+                    자주 가는 수영장을 고정해보세요!
                   </Text>
                 </View>
               </View>
             ) : (
               <ScrollView
-                indicatorStyle="white"
+                showsHorizontalScrollIndicator={false}
                 horizontal
                 contentContainerStyle={{paddingHorizontal: 20}}>
                 {myPoolData.map((item, index) => {
                   return (
-                    <TouchableOpacity key={index} onPress={()=>{navigation.navigate('SearchDetailScreen', {item: item})}}>
-
-                    <View
-                      
-                      style={{
-                        width: Dimensions.get("screen").width * 0.8, //device 크기로 변환
-                        height: 107,
-                        backgroundColor: "#FFFFFF",
-                        borderRadius: 10,
-                        marginRight: 8,
-                        marginBottom: 10,
-                        paddingTop: 16,
-                        paddingHorizontal: 16,
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => {
+                        navigation.navigate("SearchDetailScreen", {item: item})
                       }}>
                       <View
                         style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "space-between",
+                          width:
+                            myPoolData.length === 1
+                              ? Dimensions.get("screen").width - 40
+                              : Dimensions.get("screen").width * 0.8, //device 크기로 변환
+                          height: 107,
+                          backgroundColor: "#FFFFFF",
+                          borderRadius: 10,
+                          marginRight: 8,
+                          marginBottom: 10,
+                          paddingTop: 16,
+                          paddingHorizontal: 16,
                         }}>
-                        <Text
+                        <View
                           style={{
-                            color: SyeongColors.gray_8,
-                            fontSize: 16,
-                            fontWeight: "600",
-                            lineHeight: 19.09,
-                            letterSpacing: -0.41,
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
                             marginBottom: 8,
                           }}>
-                          {item.name}
-                        </Text>
-                        <TouchableOpacity
-                          onPress={() => {
-                            onPressPin(item._id)
-                          }}>
-                          <Image
-                            source={pin_icon_sub4}
-                            style={{width: 24, height: 24}}
+                          <Text
+                            style={{
+                              color: SyeongColors.gray_8,
+                              fontSize: 16,
+                              fontWeight: "600",
+                              lineHeight: 19.09,
+                              letterSpacing: -0.41,
+                            }}>
+                            {item.name}
+                          </Text>
+                          <TouchableOpacity
+                            onPress={() => {
+                              onPressPin(item._id)
+                            }}>
+                            <Image
+                              source={pin_icon_sub4}
+                              style={{width: 24, height: 24}}
                             />
-                        </TouchableOpacity>
-                      </View>
+                          </TouchableOpacity>
+                        </View>
 
-                      <Text
-                        numberOfLines={1}
-                        style={{
-                          color: SyeongColors.gray_4,
-                          fontSize: 15,
-                          fontWeight: "500",
-                          lineHeight: 22,
-                          letterSpacing: -0.41,
-                        }}>
-                        {item.address}
-                      </Text>
-                    </View>
-                </TouchableOpacity>
+                        <Text
+                          numberOfLines={1}
+                          style={{
+                            color: SyeongColors.gray_4,
+                            fontSize: 15,
+                            fontWeight: "500",
+                            lineHeight: 22,
+                            letterSpacing: -0.41,
+                          }}>
+                          {item.address}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
                   )
                 })}
               </ScrollView>
             )}
-            </View>
-            </View>
-            <View style={styles.poolListTitle}>
+          </View>
+        </View>
+        <View style={styles.poolListTitle}>
           <View style={styles.poolListButton}>
             <Image source={map_icon} style={styles.map_icon} />
 
@@ -286,28 +289,34 @@ const HomeMainScreen = ({navigation, route}) => {
             모든 수영장 {displayPoolData.length}
           </Text>
         </View>
-      </View>
+      </>
     )
   }
 
   const renderListHeaderItem = () => {
     return (
-      <View>
-        <View style={{marginTop: 136, alignItems: "center"}}>
+      <>
+        <View
+          style={{
+            marginTop: Dimensions.get("screen").height * 0.18,
+            alignItems: "center",
+          }}>
           <Image source={syeong_logo} style={styles.syeong_logo} />
           <Text style={styles.smallText}>
-            셩과 당신의 하루를 위해{"\n"}서울 곳곳의 수영장 맛집을 알려드려요!
+            {!userAtom.privateinfo.goal
+              ? `셩과 함께\n즐거운 수영 생활을 시작해볼까요?`
+              : userAtom.privateinfo.goal}
           </Text>
-          <Image source={caret_up_linear_gradient} style={styles.caret_up} />
+          <Animated.View style={[animatedOpacityReverse]}>
+            <Image source={caret_up_linear_gradient} style={styles.caret_up} />
+          </Animated.View>
         </View>
+
         {renderFirstItem()}
-      </View>
+      </>
     )
   }
   const renderFlatListItem: ListRenderItem<PoolType> = ({item, index}) => {
-    // if (index === 0) {
-    //   return renderFirstItem()
-    // }
     return (
       <View
         style={{backgroundColor: SyeongColors.gray_1, paddingHorizontal: 20}}>
@@ -318,23 +327,42 @@ const HomeMainScreen = ({navigation, route}) => {
 
   return (
     <View style={styles.view}>
-      <StatusBar barStyle={iconState ? "dark-content" : "light-content"} />
-      <ImageBackground source={home_background} style={styles.imageBackground}>
+      <StatusBar
+        barStyle={
+          Platform.OS === "android"
+            ? "light-content"
+            : iconState
+            ? "dark-content"
+            : "light-content"
+        }
+      />
+      <ImageBackground
+        source={landing_background}
+        style={styles.imageBackground}
+        imageStyle={{height: 510}}>
         <Animated.View
           style={[
             {
-              marginTop: insets.top,
               width: "100%",
+              paddingHorizontal: 20,
               alignItems: "center",
               zIndex: 20,
               position: "absolute",
-              paddingHorizontal: 20,
-              top: -50,
-              height: 99,
-              paddingTop: insets.top,
+              top: 0,
+              height: insets.top + 44,
+              paddingTop: insets.top + 7,
               backgroundColor: SyeongColors.gray_1,
               flexDirection: "row",
               justifyContent: "space-between",
+              shadowColor: "#8B95A199",
+              shadowOffset: {
+                width: 0,
+                height: 6,
+              },
+              shadowOpacity: 0.57,
+              shadowRadius: 5,
+
+              elevation: 10,
             },
             animatedOpacity,
           ]}>
@@ -356,7 +384,11 @@ const HomeMainScreen = ({navigation, route}) => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("MyMainScreen")
+              if (!isLoggedIn) {
+                setIsLoginModalVisible(true)
+              } else {
+                navigation.navigate("MyMainScreen")
+              }
             }}>
             <Image
               source={user_icon}
@@ -391,7 +423,11 @@ const HomeMainScreen = ({navigation, route}) => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("MyMainScreen")
+            if (!isLoggedIn) {
+              setIsLoginModalVisible(true)
+            } else {
+              navigation.navigate("MyMainScreen")
+            }
           }}
           style={{zIndex: 10}}>
           <Image
@@ -412,44 +448,34 @@ const HomeMainScreen = ({navigation, route}) => {
         <Animated.FlatList
           data={displayPoolData}
           renderItem={renderFlatListItem}
-          // stickyHeaderIndices={[1]}
           onScroll={scrollHandler}
           ListHeaderComponent={renderListHeaderItem()}
-          contentContainerStyle={{paddingBottom: 30}}
+          contentContainerStyle={{
+            paddingBottom: 30,
+          }}
+          // style={{backgroundColor: SyeongColors.gray_1}}
+          // ListHeaderComponentStyle={{backgroundColor: "transparent"}}
           ref={flatListRef}
         />
-        <TouchableOpacity
-          onPress={() => {
-            flatListRef.current?.scrollToIndex({index: 0, animated: true})
-          }}>
-          <View
-            style={{
-              backgroundColor: SyeongColors.gray_2,
-              width: 60,
-              height: 60,
-              borderRadius: 999,
-              position: "absolute",
-              right: 20,
-              bottom: 50,
-              justifyContent: "center",
-              alignItems: "center",
-              shadowColor: "#8B95A199",
-              shadowOffset: {
-                width: 0,
-                height: 6,
-              },
-              shadowOpacity: 0.57,
-              shadowRadius: 5,
-
-              elevation: 10,
-            }}>
-            <Image
-              source={arrow_line_up_icon}
-              style={{width: 28, height: 28}}
-            />
-          </View>
-        </TouchableOpacity>
       </ImageBackground>
+      <DoubleModal
+        isVisible={isLoginModalVisible}
+        setIsVisible={setIsLoginModalVisible}
+        image={traffic_cone_icon}
+        mainText={"로그인이 필요한 서비스입니다."}
+        subText={
+          `로그인을 하면 리뷰, 자주 가는 수영장 고정 등\n더 많은 서비스를 이용할 수 있어요.`
+        }
+        leftButtonText={"아니요"}
+        onPressLeftButton={() => {
+          setIsLoginModalVisible(false)
+        }}
+        rightButtonText={"간편 로그인하기"}
+        onPressRightButton={() => {
+          setIsLoginModalVisible(false)
+          navigation.navigate("LandingScreen")
+        }}
+      />
     </View>
   )
 }
@@ -466,7 +492,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     paddingTop: 26,
-    marginTop: 70,
+    marginTop: Dimensions.get("screen").height * 0.06,
   },
   myPoolTitle: {
     flexDirection: "row",
@@ -509,11 +535,11 @@ const styles = StyleSheet.create({
   smallText: {
     textAlign: "center",
     color: "#FFFFFF",
-    fontSize: 15,
-    lineHeight: 21,
+    fontSize: 16,
+    lineHeight: 22.4,
     letterSpacing: -0.41,
     fontWeight: "500",
-    marginTop: 31.39,
+    marginTop: 45,
     marginBottom: 15,
   },
   caret_up: {width: 32, height: 32},

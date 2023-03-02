@@ -1,24 +1,37 @@
-import {View, Text, ImageBackground, StatusBar, StyleSheet} from 'react-native'
-import {SafeAreaView} from 'react-native-safe-area-context'
-import React from 'react'
-import landing_background from '../../../../assets/images/landing_background.png'
-import {SyeongColors} from '../../../components/Colors'
-import BasicButton from '../../../components/Button/BasicButton'
+import {View, Text, ImageBackground, StatusBar, StyleSheet, TouchableOpacity} from "react-native"
+import {SafeAreaView} from "react-native-safe-area-context"
+import React from "react"
+import landing_background from "../../../../assets/images/landing_background.png"
+import {SyeongColors} from "../../../components/Colors"
+import BasicButton from "../../../components/Button/BasicButton"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
+import Image from "../../../components/Image/Image"
+import {x_icon_gray1} from "../../../../assets/icons"
+import Header from "../../../components/Header/Header"
 
 const LandingScreen = ({navigation}) => {
   return (
     <View style={styles.view}>
       <StatusBar barStyle={'light-content'} />
+      {/* <SyeongStatusBar /> */}
       <ImageBackground
         source={landing_background}
         style={styles.container}
         resizeMode="cover">
         <SafeAreaView style={styles.safeAreaView}>
           <View>
-            <Text style={styles.title}>
-              셩과 함께,{'\n'}숨겨진 수영장 맛집 찾아볼까요?
-            </Text>
-            <Text style={styles.subTitle}>로그인 후 셩 사용이 가능해요</Text>
+            <Header backgroundColor="transparent" padding={[7,0,0,0]}>
+              <TouchableOpacity onPress={()=>{navigation.goBack()}} style={{alignItems:'flex-end'}}>
+
+              <Image source={x_icon_gray1} style={{width: 24, height: 24}} />
+              </TouchableOpacity>
+            </Header>
+            <View>
+              <Text style={styles.title}>수영이 즐거운 삶의 시작, 셩</Text>
+              <Text style={styles.subTitle}>
+                1분 간편 회원가입 후 셩을 이용하실 수 있어요
+              </Text>
+            </View>
           </View>
           <View>
             <BasicButton
@@ -28,22 +41,22 @@ const LandingScreen = ({navigation}) => {
               fullWidth
               margin={[0, 0, 12, 0]}
               onPress={() => {
-                navigation.navigate('SignUpScreen')
+                navigation.navigate("SignUpScreen")
               }}
             />
             <BasicButton
               text="로그인"
-              backgroundColor={'transparent'}
+              backgroundColor={"transparent"}
               textColor={SyeongColors.sub_2}
               borderColor={SyeongColors.sub_2}
               fullWidth
               margin={[0, 0, 24, 0]}
               onPress={() => {
-                navigation.navigate('SignInScreen')
+                navigation.navigate("SignInScreen")
               }}
             />
             <Text style={styles.smallText}>
-              로그인 후 셩의 개인정보처리방침 및 이용약관에 동의{'\n'}하는
+              회원가입 시 셩의 개인정보처리방침 및 이용약관에{"\n"}동의하는
               것으로 간주합니다.
             </Text>
           </View>
@@ -58,31 +71,32 @@ const styles = StyleSheet.create({
   container: {flex: 1, paddingHorizontal: 20},
   safeAreaView: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   title: {
     fontSize: 24,
     lineHeight: 33.6,
     letterSpacing: -0.41,
-    fontWeight: '700',
+    fontWeight: "700",
     color: SyeongColors.gray_1,
-    marginTop: 137,
+    marginTop: 75,
     marginBottom: 8,
   },
   subTitle: {
     fontSize: 16,
     lineHeight: 19.09,
     letterSpacing: -0.41,
-    fontWeight: '500',
+    fontWeight: "500",
     color: SyeongColors.gray_2,
   },
   smallText: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: "500",
     lineHeight: 16.8,
     letterSpacing: -0.41,
     color: SyeongColors.gray_3,
-    textAlign: 'center',
+    textAlign: "center",
+    marginBottom: 20,
   },
 })
 

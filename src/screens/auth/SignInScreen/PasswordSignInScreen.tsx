@@ -11,11 +11,14 @@ import {authAtom} from "../../../atoms/auth"
 import {POST_SignIn} from "../../../axios/auth"
 import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
 import Config from "react-native-config"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
+import { SERVER_URL } from "../../../../config"
 
 const PasswordSignInScreen = ({navigation, route}) => {
   const {pnum} = route.params
   const [password, setPassword] = useState<string>("")
   const [isInValid, setIsInValid] = useState<boolean>(false)
+  const [isFetching, setIsFetching] = useState<boolean>(false)
   const setIsLoggedIn = useSetRecoilState(authAtom)
 
   const onPressButton = () => {
@@ -23,11 +26,13 @@ const PasswordSignInScreen = ({navigation, route}) => {
   }
 
   const requestSignIn = async () => {
+    if (isFetching) return
     try {
+      setIsFetching(true)
       const data = await POST_SignIn(pnum, password)
       const result = await CookieManager.setFromResponse(
-        Config.SERVER_URL,
-        data.headers['set-cookie']?.[0].split('Domain=localhost; ').join('')
+        SERVER_URL,
+        data.headers["set-cookie"]?.[0].split("Domain=localhost; ").join(""),
       )
       setIsLoggedIn(true)
     } catch (err: any) {
@@ -37,12 +42,14 @@ const PasswordSignInScreen = ({navigation, route}) => {
       } else {
         Alert.alert("로그인", "다시 시도해주세요")
       }
+    } finally {
+      setIsFetching(false)
     }
   }
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
+      <SyeongStatusBar />
       <HaederWithTitle backgroundColor={SyeongColors.gray_1} title={"로그인"} />
       <View style={styles.container}>
         <Title text="비밀번호 입력" margin={[0, 0, 24, 0]} />

@@ -5,6 +5,7 @@ import Title from "../../../components/Typography/Title"
 import BasicTextInput from "../../../components/TextInput/BasicTextInput"
 import BasicButton from "../../../components/Button/BasicButton"
 import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
 
 const PasswordSettingScreen = ({navigation, route}) => {
   const [password, setPassword] = useState<string>("")
@@ -21,7 +22,7 @@ const PasswordSettingScreen = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
+      <SyeongStatusBar />
       <HaederWithTitle
         backgroundColor={SyeongColors.gray_1}
         title={"회원가입"}

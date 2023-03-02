@@ -1,6 +1,8 @@
 import React, {useState} from "react"
 import {
   Alert,
+  KeyboardAvoidingView,
+  Platform,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -17,6 +19,7 @@ import {POST_AddReview} from "../../../axios/review"
 import BasicButton from "../../../components/Button/BasicButton"
 import {SyeongColors} from "../../../components/Colors"
 import Header from "../../../components/Header/Header"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
 import Image from "../../../components/Image/Image"
 import DoubleModal from "../../../components/Modal/DoubleModal"
 
@@ -46,14 +49,16 @@ const WriteReviewScreen = ({navigation, route}) => {
   }
 
   const requestAddReview = async () => {
+    setIsModalVisible(false)
     try {
       const result = await POST_AddReview(data._id, {
         textreview: reviewText,
         keywordreviews: reviewTags,
       })
-      console.log(result)
-      setIsModalVisible(false)
-      navigation.replace("CompleteScreen")
+      setTimeout(() => {
+        setIsModalVisible(false)
+        navigation.replace("CompleteScreen")
+      }, 300)
     } catch (err) {
       console.log(err)
       Alert.alert("리뷰 등록에 실패했습니다. 다시 시도해주세요!")
@@ -141,7 +146,7 @@ const WriteReviewScreen = ({navigation, route}) => {
 
   const renderTextReview = () => {
     return (
-      <View style={{marginTop: 50, paddingHorizontal: 20}}>
+      <View style={{marginTop: 50, paddingHorizontal: 20, marginBottom: 30}}>
         <Text
           style={{
             color: SyeongColors.gray_8,
@@ -151,7 +156,7 @@ const WriteReviewScreen = ({navigation, route}) => {
             letterSpacing: -0.41,
             marginBottom: 16,
           }}>
-          작성 리뷰
+          리뷰 작성하기
         </Text>
         <View
           style={{
@@ -201,7 +206,10 @@ const WriteReviewScreen = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
+      {/* <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "position" : "height"}
+        style={{flex: 1, justifyContent: 'space-between'}}> */}
+      <SyeongStatusBar />
       <Header backgroundColor="#FFFFFF">
         <View style={styles.backButton}>
           <TouchableOpacity
@@ -215,11 +223,16 @@ const WriteReviewScreen = ({navigation, route}) => {
           <Text style={styles.title}>{data.name}</Text>
         </View>
       </Header>
-      <ScrollView>
-        {renderKeywordReview()}
-        {renderTextReview()}
-      </ScrollView>
-      <View style={{paddingHorizontal: 20, marginTop: 20}}>
+
+      <KeyboardAvoidingView
+        style={{flex: 1, flexDirection: "column", justifyContent: "center"}}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <ScrollView>
+          {renderKeywordReview()}
+          {renderTextReview()}
+        </ScrollView>
+      </KeyboardAvoidingView>
+      <View style={{paddingHorizontal: 20, marginTop: "auto"}}>
         <BasicButton
           backgroundColor={SyeongColors.main_3}
           text="완료하기"
@@ -236,9 +249,7 @@ const WriteReviewScreen = ({navigation, route}) => {
       <DoubleModal
         image={pencil_icon_sub3}
         mainText={"작성한 리뷰를 등록할까요?"}
-        subText={
-          "작성 완료한 수영장 키워드, 작성 리뷰를\n수영장 정보에 새롭게 등록해 드려요"
-        }
+        subText={"수영장 리뷰를 등록합니다."}
         isVisible={isModalVisible}
         setIsVisible={setIsModalVisible}
         leftButtonText="아니요"
@@ -248,6 +259,7 @@ const WriteReviewScreen = ({navigation, route}) => {
         rightButtonText="등록하기"
         onPressRightButton={onPressButton}
       />
+      {/* </KeyboardAvoidingView> */}
     </SafeAreaView>
   )
 }

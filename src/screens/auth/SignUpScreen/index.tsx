@@ -11,6 +11,7 @@ import {POST_Pnum_Request_SignUp} from "../../../axios/auth"
 import BasicButton from "../../../components/Button/BasicButton"
 import {SyeongColors} from "../../../components/Colors"
 import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
 import BasicTextInput from "../../../components/TextInput/BasicTextInput"
 import Title from "../../../components/Typography/Title"
 
@@ -51,7 +52,7 @@ const SignUpScreen = ({navigation}) => {
   }
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
+      <SyeongStatusBar />
       <HaederWithTitle
         backgroundColor={SyeongColors.gray_1}
         title={"회원가입"}

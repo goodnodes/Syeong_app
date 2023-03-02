@@ -33,14 +33,17 @@ import {
   pencil_icon_sub3,
   phone_icon,
   pin_icon_gray3,
-  pin_icon_shadow,
+  pin_icon_gray3_shadow,
   pin_icon_sub4,
   pin_icon_sub4_shadow,
+  push_pin_simple_icon_sub3,
   share_icon,
   share_icon_gray8,
+  traffic_cone_icon,
 } from "../../../../assets/icons"
+import {blank_image} from "../../../../assets/images"
 import {KeywordType} from "../../../../assets/static/keyword"
-import {user} from "../../../atoms/auth"
+import {authAtom, user} from "../../../atoms/auth"
 import {PoolType} from "../../../atoms/pool"
 import {GET_ReviewByPool} from "../../../axios/review"
 import BackButton from "../../../components/Button/BackButton"
@@ -48,6 +51,7 @@ import BasicButton from "../../../components/Button/BasicButton"
 import {SyeongColors} from "../../../components/Colors"
 import Image from "../../../components/Image/Image"
 import DoubleModal from "../../../components/Modal/DoubleModal"
+import SingleModal from "../../../components/Modal/SingleModal"
 import {useMyPoolAdd, useMyPoolDelete} from "../../../hooks/useMyPool"
 import ReviewBadgeComponent from "./ReviewBadgeComponent"
 import ReviewItem from "./ReviewItem"
@@ -76,9 +80,15 @@ const SearchDetailScreen = ({navigation, route}) => {
 
   const [iconState, setIconState] = useState<boolean>()
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
+  const [isMyPoolModalVisible, setIsMyPoolModalVisible] =
+    useState<boolean>(false)
+  const [isWarningModalVisible, setIsWarningModalVisible] =
+    useState<boolean>(false)
+  const [isLoginModalVisible, setIsLoginModalVisible] = useState<boolean>(false)
   const [reviews, setReviews] = useState<ReviewType[]>([])
   const [topTags, setTopTags] = useState<TopTagsType[]>([])
   const userAtom = useRecoilValue(user)
+  const isLoggedIn = useRecoilValue(authAtom)
 
   const [pagerState, setPagerState] = useState<number>(0)
   const pagerRef = useRef<PagerView>()
@@ -142,14 +152,23 @@ const SearchDetailScreen = ({navigation, route}) => {
   }
 
   const onPressPin = async () => {
+    if (!isLoggedIn) {
+      setIsLoginModalVisible(true)
+      return
+    }
     try {
       if (userAtom.mypools?.includes(item._id)) {
         await useMyPoolDelete(item._id)
       } else {
         await useMyPoolAdd(item._id)
+        setIsMyPoolModalVisible(true)
       }
     } catch (err) {
-      console.log(err)
+      if (err === "myPool limit") {
+        setIsWarningModalVisible(true)
+      } else {
+        console.log(err)
+      }
     }
   }
 
@@ -165,12 +184,12 @@ const SearchDetailScreen = ({navigation, route}) => {
         <NaverMapView
           style={{
             width: "100%",
-            height: 250,
+            height: 180,
             marginBottom: 14,
             marginTop: 20,
           }}
-          showsMyLocationButton={true}
-          center={{...position, zoom: 16}}
+          // showsMyLocationButton={true}
+          center={{...position, zoom: 13}}
           // onTouch={e =>
           //   console.warn("onTouch", JSON.stringify(e.nativeEvent))
           // }
@@ -187,7 +206,7 @@ const SearchDetailScreen = ({navigation, route}) => {
         <View
           style={{
             flexDirection: "row",
-            alignItems: "flex-start",
+            alignItems: "center",
             marginBottom: 36,
           }}>
           <Image
@@ -237,7 +256,7 @@ const SearchDetailScreen = ({navigation, route}) => {
             onPress={() => {
               Linking.openURL(
                 `nmap://search?query=${encodeURI(
-                  item.address,
+                  item.name,
                 )}&appname=org.reactjs.native.syeong-app`,
               ).catch(err => {
                 if (Platform.OS === "ios") {
@@ -249,11 +268,12 @@ const SearchDetailScreen = ({navigation, route}) => {
                 }
               })
             }}
-            width={156}
+            flexShrink
+            padding={[0, 8, 0, 8]}
             height={36}
             borderRadius={8}
             borderColor={SyeongColors.sub_3}
-            textSize={16}
+            textSize={15}
             borderWidth={1}
           />
         </View>
@@ -271,6 +291,10 @@ const SearchDetailScreen = ({navigation, route}) => {
           </View>
           <TouchableOpacity
             onPress={() => {
+              if (!isLoggedIn) {
+                setIsLoginModalVisible(true)
+                return
+              }
               if (reviews.filter(el => el.userid === userAtom._id).length) {
                 setIsModalVisible(true)
               } else {
@@ -310,7 +334,7 @@ const SearchDetailScreen = ({navigation, route}) => {
                 letterSpacing: -0.41,
                 color: SyeongColors.gray_4,
               }}>
-              새로운 수영장 리뷰를 작성할 수 있어요
+              {`가장 처음으로 리뷰를 작성해주세요!`}
             </Text>
           </View>
         ) : (
@@ -335,6 +359,7 @@ const SearchDetailScreen = ({navigation, route}) => {
                     reviews,
                     topTags,
                     name: item.name,
+                    _id: item._id,
                   })
                 }}>
                 <Text
@@ -389,24 +414,25 @@ const SearchDetailScreen = ({navigation, route}) => {
             lineHeight: 17.9,
             letterSpacing: -0.41,
           }}>
-          수영 강습을 받고 싶나요?
+          수영 강습에 관심이 있다면
         </Text>
         {!item.costinfourl.length ? (
           <BasicButton
-            disabled={!item.costinfourl.length}
+            disabled
             disableTextColor={SyeongColors.gray_1}
             text="강습 정보 보러가기"
             backgroundColor={"#CBDEF8"}
             textColor={SyeongColors.gray_1}
             onPress={() => {
-              console.log(item.freeswiminfourl)
+              console.log(item.costinfourl)
               Linking.openURL(item.costinfourl)
             }}
-            width={143}
+            flexShrink
+            padding={[0, 10, 0, 10]}
             height={36}
             borderRadius={8}
             borderColor={"#CAEEDF"}
-            textSize={16}
+            textSize={15}
             borderWidth={1}
           />
         ) : (
@@ -415,14 +441,15 @@ const SearchDetailScreen = ({navigation, route}) => {
             backgroundColor={SyeongColors.main_3}
             textColor={SyeongColors.gray_1}
             onPress={() => {
-              console.log(item.freeswiminfourl)
-              Linking.openURL(item.freeswiminfourl)
+              console.log(item.costinfourl)
+              Linking.openURL(item.costinfourl)
             }}
-            width={143}
+            flexShrink
+            padding={[0, 10, 0, 10]}
             height={36}
             borderRadius={8}
             borderColor={SyeongColors.sub_3}
-            textSize={16}
+            textSize={15}
             borderWidth={1}
           />
         )}
@@ -454,11 +481,12 @@ const SearchDetailScreen = ({navigation, route}) => {
               console.log(item.freeswiminfourl)
               Linking.openURL(item.freeswiminfourl)
             }}
-            width={143}
+            flexShrink
+            padding={[0, 10, 0, 10]}
             height={36}
             borderRadius={8}
             borderColor={"#CAEEDF"}
-            textSize={16}
+            textSize={15}
             borderWidth={1}
           />
         ) : (
@@ -470,11 +498,12 @@ const SearchDetailScreen = ({navigation, route}) => {
               console.log(item.freeswiminfourl)
               Linking.openURL(item.freeswiminfourl)
             }}
-            width={143}
+            flexShrink
+            padding={[0, 10, 0, 10]}
             height={36}
             borderRadius={8}
             borderColor={SyeongColors.sub_3}
-            textSize={16}
+            textSize={15}
             borderWidth={1}
           />
         )}
@@ -488,12 +517,12 @@ const SearchDetailScreen = ({navigation, route}) => {
         <View
           style={{
             flexDirection: "row",
-            alignItems: "flex-start",
+            alignItems: "center",
             marginVertical: 6,
           }}>
           <Image
             source={map_icon_main3}
-            style={[styles.map_icon_main3, {marginTop: 1}]}
+            style={[styles.map_icon_main3, {marginTop: 0}]}
           />
 
           <Text
@@ -524,7 +553,12 @@ const SearchDetailScreen = ({navigation, route}) => {
             alignItems: "center",
             justifyContent: "space-between",
           }}>
-          <View style={styles.rowAlignCenter}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginVertical: 6,
+            }}>
             <Image source={phone_icon} style={styles.map_icon_main3} />
             <TouchableOpacity
               onPress={() => {
@@ -570,49 +604,69 @@ const SearchDetailScreen = ({navigation, route}) => {
   }
 
   return (
-    <View style={{flex: 1}}>
-      <StatusBar barStyle={iconState ? "dark-content" : "light-content"} />
+    <View style={{flex: 1, backgroundColor: "#FFFFFF"}}>
+      <StatusBar
+        barStyle={
+          Platform.OS === "android"
+            ? "light-content"
+            : iconState
+            ? "dark-content"
+            : "light-content"
+        }
+      />
       <Animated.View
         style={[
           {
-            marginTop: insets.top,
             width: "100%",
             alignItems: "center",
             zIndex: 20,
             position: "absolute",
             paddingHorizontal: 20,
-            top: -50,
-            height: 99,
-            paddingTop: insets.top,
+            top: 0,
+            height: insets.top + 44,
+            paddingTop: insets.top + 7,
             backgroundColor: "#FFFFFF",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            shadowColor: "#C5CCD366",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.57,
+            shadowRadius: 5,
+
+            elevation: 10,
           },
           animatedOpacity,
         ]}>
-        <View style={{position: "absolute", top: insets.top + 10.5, left: 20}}>
-          <BackButton />
-        </View>
-
-        <Text
-          numberOfLines={1}
+        <BackButton />
+        <View
           style={{
-            color: SyeongColors.gray_8,
-            fontSize: 17,
-            fontWeight: "600",
-            lineHeight: 20.29,
-            letterSpacing: -0.41,
-            marginTop: insets.top - 34,
-            width: 160,
-            textAlign: "center",
+            left: 20,
+            position: "absolute",
+            top: insets.top + 14,
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            zIndex: -10,
           }}>
-          {item.name}
-        </Text>
+          <Text
+            numberOfLines={1}
+            style={{
+              color: SyeongColors.gray_8,
+              fontSize: 17,
+              fontWeight: "600",
+              lineHeight: 20.29,
+              letterSpacing: -0.41,
+            }}>
+            {item.name}
+          </Text>
+        </View>
         <View
           style={{
             flexDirection: "row",
             alignContent: "center",
-            position: "absolute",
-            top: insets.top + 12,
-            right: 20,
           }}>
           <TouchableOpacity onPress={onShare}>
             <Image
@@ -635,16 +689,16 @@ const SearchDetailScreen = ({navigation, route}) => {
       <View
         style={[
           {
-            marginTop: insets.top + 5,
             flexDirection: "row",
             justifyContent: "space-between",
+            alignItems: "center",
             zIndex: 10,
             position: "absolute",
             paddingHorizontal: 20,
             width: "100%",
-            top: -55,
-            height: 99,
-            paddingTop: insets.top + 12,
+            top: 0,
+            height: insets.top + 44,
+            paddingTop: insets.top + 7,
           },
         ]}>
         <BackButton isLight />
@@ -660,7 +714,7 @@ const SearchDetailScreen = ({navigation, route}) => {
               source={
                 userAtom.mypools?.includes(item._id)
                   ? pin_icon_sub4_shadow
-                  : pin_icon_shadow
+                  : pin_icon_gray3_shadow
               }
               style={{width: 24, height: 24}}
             />
@@ -687,14 +741,17 @@ const SearchDetailScreen = ({navigation, route}) => {
             setPagerState(e.nativeEvent.position)
           }}>
           <Image
-            source={{uri: item.imgurl}}
+            source={item.imgurl ? {uri: item.imgurl} : blank_image}
             key={1}
             style={{
               width: "100%",
               height: Dimensions.get("screen").height / 2.4,
-            }}></Image>
+            }}
+          />
           <Image
-            source={{uri: item.outsideimgurl}}
+            source={
+              item.outsideimgurl ? {uri: item.outsideimgurl} : blank_image
+            }
             key={2}
             style={{
               width: "100%",
@@ -749,7 +806,7 @@ const SearchDetailScreen = ({navigation, route}) => {
           </View>
           <View style={styles.titleRow}>
             <Text style={styles.title}>{item.name}</Text>
-            {item.lanelength && item.lanenum && (
+            {item.lanelength !== 0 && item.lanenum !== 0 ? (
               <>
                 <View style={styles.laneBadge}>
                   <Text style={styles.laneBadgeText}>{item.lanelength}m</Text>
@@ -758,15 +815,110 @@ const SearchDetailScreen = ({navigation, route}) => {
                   <Text style={styles.numberBadgeText}>{item.lanenum}</Text>
                 </View>
               </>
-            )}
+            ) : null}
           </View>
           {renderBasicInfo()}
           {renderFreeSwimInfo()}
           {renderReview()}
           {renderCostInfo()}
           {renderMap()}
+          <View
+            style={{
+              marginBottom: 20,
+            }}>
+            <Text
+              style={{
+                color: SyeongColors.gray_4,
+                fontSize: 14,
+                fontWeight: "500",
+                lineHeight: 22,
+                letterSpacing: -0.41,
+              }}>
+              위 정보의 출처는{" "}
+              <Text
+                style={{
+                  color: SyeongColors.main_3,
+                  fontSize: 14,
+                  fontWeight: "500",
+                  lineHeight: 22,
+                  letterSpacing: -0.41,
+                }}>
+                {item.name} 홈페이지
+              </Text>{" "}
+              입니다
+            </Text>
+          </View>
+          <View
+            style={{
+              marginBottom: 50,
+            }}>
+            <Text
+              style={{
+                color: SyeongColors.gray_3,
+                fontSize: 14,
+                fontWeight: "500",
+                lineHeight: 22,
+                letterSpacing: -0.41,
+              }}>
+              현재 시점과 다른 정보가 있을 수 있으니, 자세한 정보는 수영장 전화
+              문의를 통해 확인하세요. 업데이트가 필요한 정보는{" "}
+              <Text
+                style={{
+                  color: SyeongColors.main_3,
+                  fontSize: 14,
+                  fontWeight: "500",
+                  lineHeight: 22,
+                  letterSpacing: -0.41,
+                }}
+                onPress={() => {
+                  navigation.navigate("MySettingProposalScreen")
+                }}>
+                수정 제안
+              </Text>{" "}
+              부탁드려요.
+            </Text>
+          </View>
         </View>
       </Animated.ScrollView>
+
+      <SingleModal
+        isVisible={isMyPoolModalVisible}
+        setIsVisible={setIsMyPoolModalVisible}
+        onPressButton={() => {
+          setIsMyPoolModalVisible(false)
+        }}
+        image={push_pin_simple_icon_sub3}
+        mainText="나의 고정 수영장에 저장했어요!"
+        subText={`고정 수영장은 최대 5개까지 설정할 수 있고 홈 화면,\n내 정보에서 확인할 수 있어요`}
+        buttonText="확인"
+      />
+      <SingleModal
+        isVisible={isWarningModalVisible}
+        setIsVisible={setIsWarningModalVisible}
+        onPressButton={() => {
+          setIsWarningModalVisible(false)
+        }}
+        image={traffic_cone_icon}
+        mainText="이미 고정 수영장 5개를 설정했어요!"
+        subText={`고정 수영장은 최대 5개까지 설정할 수 있고 홈 화면,\n내 정보에서 확인할 수 있어요`}
+        buttonText="확인"
+      />
+      <DoubleModal
+        isVisible={isLoginModalVisible}
+        setIsVisible={setIsLoginModalVisible}
+        image={traffic_cone_icon}
+        mainText={"로그인이 필요한 서비스입니다."}
+        subText={`로그인을 하면 리뷰, 자주 가는 수영장 고정 등\n더 많은 서비스를 이용할 수 있어요.`}
+        leftButtonText={"아니요"}
+        onPressLeftButton={() => {
+          setIsLoginModalVisible(false)
+        }}
+        rightButtonText={"간편 로그인하기"}
+        onPressRightButton={() => {
+          setIsLoginModalVisible(false)
+          navigation.navigate("LandingScreen")
+        }}
+      />
     </View>
   )
 }
@@ -879,9 +1031,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginTop: 4,
   },
-  locationView: {
-    marginBottom: 30,
-  },
+  locationView: {},
 })
 
 export default SearchDetailScreen

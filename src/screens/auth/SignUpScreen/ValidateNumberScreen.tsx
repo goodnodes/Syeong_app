@@ -1,14 +1,13 @@
-import React, { useState } from "react"
-import {
-  Alert, StatusBar, StyleSheet, Text, View
-} from "react-native"
+import React, {useState} from "react"
+import {Alert, StatusBar, StyleSheet, Text, View} from "react-native"
 import OtpInputs from "react-native-otp-inputs"
-import { SafeAreaView } from "react-native-safe-area-context"
-import { timer_icon } from "../../../../assets/icons"
-import { POST_Validation_Check } from "../../../axios/auth"
+import {SafeAreaView} from "react-native-safe-area-context"
+import {timer_icon} from "../../../../assets/icons"
+import {POST_Validation_Check} from "../../../axios/auth"
 import BasicButton from "../../../components/Button/BasicButton"
-import { SyeongColors } from "../../../components/Colors"
+import {SyeongColors} from "../../../components/Colors"
 import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
 import SingleModal from "../../../components/Modal/SingleModal"
 import Title from "../../../components/Typography/Title"
 
@@ -41,7 +40,6 @@ const ValidateNumberScreen = ({navigation, route}) => {
         })
       }
     } catch (err: any) {
-    
       if (err.response.data.msg === "time over") {
         setIsModalVisible(true)
       } else if (err.response.data.msg === "unverified") {
@@ -58,7 +56,7 @@ const ValidateNumberScreen = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
+      <SyeongStatusBar />
       <HaederWithTitle
         backgroundColor={SyeongColors.gray_1}
         title={"회원가입"}

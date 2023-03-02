@@ -1,16 +1,16 @@
-import { Link } from "@react-navigation/native"
+import {Link} from "@react-navigation/native"
 import React from "react"
-import { Linking, StatusBar, StyleSheet, Text, View } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
+import {Linking, StatusBar, StyleSheet, Text, View} from "react-native"
+import {SafeAreaView} from "react-native-safe-area-context"
 import BasicButton from "../../../components/Button/BasicButton"
-import { SyeongColors } from "../../../components/Colors"
+import {SyeongColors} from "../../../components/Colors"
 import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
 
 const MySettingProposalScreen = () => {
-
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
+      <SyeongStatusBar />
       <HaederWithTitle
         backgroundColor={SyeongColors.gray_1}
         title={"정보 수정 제안하기"}
@@ -56,7 +56,9 @@ const MySettingProposalScreen = () => {
           borderColor={SyeongColors.main_3}
           width={120}
           height={36}
-          onPress={() => {Linking.openURL('https://forms.gle/6buRSbW2T6a647a26')}}
+          onPress={() => {
+            Linking.openURL("https://forms.gle/6buRSbW2T6a647a26")
+          }}
         />
       </View>
 
@@ -101,7 +103,9 @@ const MySettingProposalScreen = () => {
           borderColor={SyeongColors.main_3}
           width={120}
           height={36}
-          onPress={() => {Linking.openURL('https://forms.gle/ne8ZtCVMUkn1Qj4fA')}}
+          onPress={() => {
+            Linking.openURL("https://forms.gle/ne8ZtCVMUkn1Qj4fA")
+          }}
         />
       </View>
     </SafeAreaView>

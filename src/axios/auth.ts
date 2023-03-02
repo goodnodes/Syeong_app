@@ -70,12 +70,12 @@ const POST_SignIn = async (pnum: string, pwd?: string) => {
 }
 
 const GET_AutoSignIn = async () => {
-  const {data} = await AxiosInstance.get("/auth/auto")
+  const data= await AxiosInstance.get("/auth/auto")
   return data
 }
 
 const GET_SignOut = async () => {
-  const {data} = await AxiosInstance.get("/auth")
+  const data = await AxiosInstance.get("/auth")
   return data
 }
 

@@ -5,6 +5,7 @@ import {POST_SignIn} from "../../../axios/auth"
 import BasicButton from "../../../components/Button/BasicButton"
 import {SyeongColors} from "../../../components/Colors"
 import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
 import BasicTextInput from "../../../components/TextInput/BasicTextInput"
 import Title from "../../../components/Typography/Title"
 
@@ -26,6 +27,7 @@ const SignInScreen = ({navigation, route}) => {
   const requestSignInPnum = async () => {
     try {
       const data = await POST_SignIn(pnum.replace(/-/g, ""))
+      // console.log(data)
       if (data.data.msg === "valid id") {
         navigation.navigate("PasswordSignInScreen", {
           pnum: pnum.replace(/-/g, ""),
@@ -43,11 +45,8 @@ const SignInScreen = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
-      <HaederWithTitle
-        backgroundColor={SyeongColors.gray_1}
-        title={"로그인"}
-      />
+      <SyeongStatusBar />
+      <HaederWithTitle backgroundColor={SyeongColors.gray_1} title={"로그인"} />
       <View style={styles.container}>
         <Title text="휴대폰 번호 입력" margin={[0, 0, 24, 0]} />
         <BasicTextInput

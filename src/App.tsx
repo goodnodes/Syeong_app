@@ -1,4 +1,4 @@
-import React, {useEffect} from "react"
+import React, {useEffect, useState} from "react"
 import {atom, useRecoilState, useSetRecoilState} from "recoil"
 import axios from "axios"
 import {NavigationContainer} from "@react-navigation/native"
@@ -29,6 +29,10 @@ import {pool} from "./atoms/pool"
 import {GET_AutoSignIn} from "./axios/auth"
 import EditPasswordValidateCheckScreen from "./screens/my/MySettingScreen/EditPasswordValidateCheckScreen"
 import EditMyReviewScreen from "./screens/my/MyMainScreen/EditMyReviewScreen"
+import CookieManager from "@react-native-cookies/cookies"
+import {ImageBackground, Text, View} from "react-native"
+import {thumbnail_image} from "../assets/images"
+import { SERVER_URL } from "../config"
 
 const Stack = createNativeStackNavigator()
 
@@ -37,22 +41,30 @@ const App = () => {
   const setUserAtom = useSetRecoilState(user)
   const setPoolAtom = useSetRecoilState(pool)
 
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
   useEffect(() => {
     requestSignInAuto()
   }, [])
 
   useEffect(() => {
+    getPoolInfo()
     if (!isLoggedIn) return
     getUserInfo()
-    getPoolInfo()
   }, [isLoggedIn])
 
   const requestSignInAuto = async () => {
     try {
       const data = await GET_AutoSignIn()
+      const result = await CookieManager.setFromResponse(
+        SERVER_URL,
+        data.headers["set-cookie"]?.[0].split("Domain=localhost; ").join(""),
+      )
       setIsLoggedIn(true)
     } catch (err) {
       console.log(err)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -75,23 +87,43 @@ const App = () => {
       console.log(err)
     }
   }
+  if (isLoading) {
+    return <ImageBackground source={thumbnail_image} />
+  }
 
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Group
+          navigationKey={isLoggedIn ? "user" : "guest"}
+          screenOptions={{headerShown: false}}>
+          <Stack.Screen name="MainTabScreen" component={MainTabScreen} />
+          <Stack.Screen
+            name="SearchDetailScreen"
+            component={SearchDetailScreen}
+          />
+          <Stack.Screen
+            name="ReviewDetailScreen"
+            component={ReviewDetailScreen}
+          />
+                      <Stack.Screen
+              name="MySettingProposalScreen"
+              component={MySettingProposalScreen}
+            />
+        </Stack.Group>
         {isLoggedIn ? (
           <Stack.Group screenOptions={{headerShown: false}}>
-            <Stack.Screen name="MainTabScreen" component={MainTabScreen} />
+            {/* <Stack.Screen name="MainTabScreen" component={MainTabScreen} /> */}
             <Stack.Screen name="MyMainScreen" component={MyMainScreen} />
             <Stack.Screen
               name="EditProfileScreen"
               component={EditProfileScreen}
             />
             <Stack.Screen name="MySettingScreen" component={MySettingScreen} />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="MySettingProposalScreen"
               component={MySettingProposalScreen}
-            />
+            /> */}
             <Stack.Screen
               name="MySettingWithdrawalScreen"
               component={MySettingWithdrawalScreen}
@@ -108,14 +140,14 @@ const App = () => {
               name="EditPasswordValidateCheckScreen"
               component={EditPasswordValidateCheckScreen}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="SearchDetailScreen"
               component={SearchDetailScreen}
             />
             <Stack.Screen
               name="ReviewDetailScreen"
               component={ReviewDetailScreen}
-            />
+            /> */}
             <Stack.Screen
               name="WriteReviewScreen"
               component={WriteReviewScreen}

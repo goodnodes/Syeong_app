@@ -12,6 +12,7 @@ import {DELETE_DeleteUserAccount} from "../../../axios/user"
 import BasicButton from "../../../components/Button/BasicButton"
 import {SyeongColors} from "../../../components/Colors"
 import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
 import DoubleModal from "../../../components/Modal/DoubleModal"
 import {useSignOut} from "../../../hooks/useAuth"
 
@@ -21,6 +22,7 @@ const MySettingWithdrawalScreen = () => {
     try {
       await DELETE_DeleteUserAccount()
       useSignOut()
+      setIsModalVisible(false)
     } catch (err) {
       Alert.alert("탈퇴 요청에 실패했습니다. 다시 시도해주세요")
       console.log(err)
@@ -28,7 +30,7 @@ const MySettingWithdrawalScreen = () => {
   }
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
+      <SyeongStatusBar />
 
       <HaederWithTitle
         backgroundColor={SyeongColors.gray_1}
@@ -45,7 +47,7 @@ const MySettingWithdrawalScreen = () => {
           color: SyeongColors.gray_7,
           marginBottom: 16,
         }}>
-        셩에서 추후에 더 유용한 정보를 제공 드려요!
+        추후에 더 유용한 기능을 제공할 예정이에요!
       </Text>
       <View style={styles.box}>
         <Text
@@ -97,8 +99,8 @@ const MySettingWithdrawalScreen = () => {
       </View>
       <DoubleModal
         image={traffic_cone_icon}
-        mainText={"계정 탈퇴할까요?"}
-        subText={"셩에서 탈퇴할게요\n계정 가입 정보는 영구적으로 삭제합니다"}
+        mainText={"탈퇴할까요?"}
+        subText={"계정 가입 정보는 영구적으로 삭제합니다"}
         isVisible={isModalVisible}
         setIsVisible={setIsModalVisible}
         leftButtonText={"아니요"}

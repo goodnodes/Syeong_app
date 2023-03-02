@@ -162,13 +162,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#8B95A199",
+    shadowColor: "#8B95A166",
     shadowOffset: {
       width: 0,
-      height: 6,
+      height: 2,
     },
     shadowOpacity: 0.57,
-    shadowRadius: 5,
+    shadowRadius: 8,
 
     elevation: 10,
   },

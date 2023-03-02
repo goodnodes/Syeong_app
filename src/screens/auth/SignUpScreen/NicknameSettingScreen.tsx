@@ -15,6 +15,7 @@ import {POST_Signup} from "../../../axios/auth"
 import BasicButton from "../../../components/Button/BasicButton"
 import {SyeongColors} from "../../../components/Colors"
 import HaederWithTitle from "../../../components/Header/HeaderWithTitle"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
 import BasicTextInput from "../../../components/TextInput/BasicTextInput"
 import Title from "../../../components/Typography/Title"
 
@@ -22,15 +23,18 @@ const NicknameSettingScreen = ({navigation, route}) => {
   const {pnum, requestId, verifycode, password} = route.params.signUpData
   const [nickname, setNickname] = useState<string>("")
   const [isInValid, setIsInValid] = useState<boolean>(false)
+  const [isFetching, setIsFetching] = useState<boolean>(false)
   const setAuthAtom = useSetRecoilState(authAtom)
 
   const onPressButton = () => {
     // navigation.navigate('MainTabScreen')
     // setAuthAtom(true)
+    if (isFetching) return
     requestSignUp()
   }
   const requestSignUp = async () => {
     try {
+      setIsFetching(true)
       const data = await POST_Signup(
         pnum,
         password,
@@ -38,22 +42,27 @@ const NicknameSettingScreen = ({navigation, route}) => {
         verifycode,
         requestId,
       )
-      const result = await CookieManager.setFromResponse(
-        Config.SERVER_URL,
-        data.headers["set-cookie"]?.[0].split("Domain=localhost; ").join(""),
-      )
-      setAuthAtom(true)
+      // const result = await CookieManager.setFromResponse(
+      //   Config.SERVER_URL,
+      //   data.headers["set-cookie"]?.[0].split("Domain=localhost; ").join(""),
+      // )
+      // setAuthAtom(true)
+      navigation.navigate("LandingScreen")
     } catch (err: any) {
       if (err.response.data.msg === "already exist") {
         setIsInValid(true)
       } else {
         Alert.alert("회원가입", "가입에 실패했습니다. 다시 시도해주세요.")
       }
+    } finally {
+      setTimeout(() => {
+        setIsFetching(false)
+      }, 500)
     }
   }
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle={"dark-content"} />
+      <SyeongStatusBar />
       <HaederWithTitle
         backgroundColor={SyeongColors.gray_1}
         title={"회원가입"}

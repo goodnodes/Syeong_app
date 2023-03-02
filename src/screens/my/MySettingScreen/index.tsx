@@ -1,3 +1,4 @@
+import CookieManager from "@react-native-cookies/cookies"
 import React, {useState} from "react"
 import {
   Image,
@@ -9,12 +10,13 @@ import {
   Linking,
 } from "react-native"
 import {SafeAreaView} from "react-native-safe-area-context"
-import { useRecoilValue } from "recoil"
+import {useRecoilValue} from "recoil"
 import {chevron_right, traffic_cone_icon} from "../../../../assets/icons"
-import { user } from "../../../atoms/auth"
+import {user} from "../../../atoms/auth"
 import BackButton from "../../../components/Button/BackButton"
 import {SyeongColors} from "../../../components/Colors"
 import Header from "../../../components/Header/Header"
+import SyeongStatusBar from "../../../components/Header/SyeongStatusBar"
 import DoubleModal from "../../../components/Modal/DoubleModal"
 import {useSignOut} from "../../../hooks/useAuth"
 
@@ -23,7 +25,7 @@ const MySettingScreen = ({navigation}) => {
   const userAtom = useRecoilValue(user)
   const signOut = async () => {
     try {
-      await useSignOut()
+      const data = await useSignOut()
       setIsModalVisible(false)
     } catch (err) {
       console.log(err)
@@ -31,6 +33,7 @@ const MySettingScreen = ({navigation}) => {
   }
   return (
     <SafeAreaView style={styles.safeAreaView}>
+      <SyeongStatusBar />
       <Header backgroundColor={SyeongColors.gray_1}>
         <View style={{alignItems: "flex-start"}}>
           <BackButton />
@@ -42,7 +45,9 @@ const MySettingScreen = ({navigation}) => {
           <TouchableOpacity>
             <View style={styles.button}>
               <Text style={styles.buttonText}>휴대폰</Text>
-              <Text style={styles.buttonSubText}>{userAtom.privateinfo.pnum}</Text>
+              <Text style={styles.buttonSubText}>
+                {userAtom.privateinfo.pnum}
+              </Text>
             </View>
           </TouchableOpacity>
         </View>
